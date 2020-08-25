@@ -1,8 +1,6 @@
 const catchHelper = require("../helpers/catch.helper");
 const User = require("../mongodb/schemas/user.schema");
-const {
-    dev: { jwtSecret },
-} = require("../config/config.json");
+const { jwtSecret } = require("../config");
 const { sign } = require("jsonwebtoken");
 /**
  * @param {import("express").Request} req

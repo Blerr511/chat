@@ -3,5 +3,10 @@
         "PORT": 8080,
         "mongoString": "mongodb://localhost:27017/chat",
         "jwtSecret": "verySecretKey"
+    },
+    "prod": {
+        "PORT": 9999,
+        "mongoString": "mongodb://production:27017/chat",
+        "jwtSecret": "verySecretKeyproduction"
     }
 }

@@ -1,7 +1,5 @@
 const { verify, JsonWebTokenError, decode } = require("jsonwebtoken");
-const {
-    dev: { jwtSecret },
-} = require("../config/config.json");
+const { jwtSecret } = require("../config");
 const catchHelper = require("../helpers/catch.helper");
 /**
  * @param {import("express").Request} req

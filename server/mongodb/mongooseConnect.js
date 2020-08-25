@@ -1,6 +1,4 @@
-const {
-    dev: { mongoString },
-} = require("../config/config.json");
+const { mongoString } = require("../config");
 //----------------------------------------------------------//
 const mongoose = require("mongoose");
 
@@ -9,9 +7,9 @@ module.exports = () => {
         .connect(mongoString, {
             useCreateIndex: true,
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
         })
         .then(() => {
-            console.log(`Connected to mongodb ${mongoString}`);
+            console.log("Connected to mongodb " + mongoString.blue);
         });
 };
