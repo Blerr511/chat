@@ -1,0 +1,24 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server":"cd server && npm start",
+    "client":"cd client && npm start",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blerr511/chat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Blerr511/chat/issues"
+  },
+  "homepage": "https://github.com/Blerr511/chat#readme",
+  "devDependencies": {
+    "eslint": "^7.7.0"
+  }
+}

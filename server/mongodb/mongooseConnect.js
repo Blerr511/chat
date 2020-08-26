@@ -1,7 +1,10 @@
 const { mongoString } = require("../config");
-//----------------------------------------------------------//
+// ---------------------------------------------------------- //
 const mongoose = require("mongoose");
-
+/**
+ * Connecting to mongoDb
+ * @return {Promise<void>}
+ */
 module.exports = () => {
     return mongoose
         .connect(mongoString, {
