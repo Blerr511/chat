@@ -11,7 +11,13 @@ socket.on("connect", () => {
         { mr: "john" },
         Uint8Array.from([1, 2, 3, 4])
     );
-    socket.emit("auth", {token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjQ1ODJjNWMzN2YwNTQ1ODAzOGI3OTAiLCJ1c2VybmFtZSI6InRlc3Q0IiwiZW1haWwiOiJ0ZXN0NEAiLCJfX3YiOjAsImlhdCI6MTU5ODM5MTkzN30.PR6_dbX2xtmnVJc2JZKvw5ONJN9G2BEQyX0JboWVaQs"});
+    socket.emit("auth", {
+        token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjQ1ODJjNWMzN2YwNTQ1ODAzOGI3OTAiLCJ1c2VybmFtZSI6InRlc3Q0IiwiZW1haWwiOiJ0ZXN0NEAiLCJfX3YiOjAsImlhdCI6MTU5ODM5MTkzN30.PR6_dbX2xtmnVJc2JZKvw5ONJN9G2BEQyX0JboWVaQs",
+    });
+    process.stdin.addListener("data", (data) => {
+        socket.emit("message", data);
+    });
 });
 
 // handle the event sent with socket.send()
