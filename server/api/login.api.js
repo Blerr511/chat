@@ -3,19 +3,16 @@ const User = require("../mongodb/schemas/user.schema");
 const { jwtSecret } = require("../config");
 const { sign } = require("jsonwebtoken");
 /**
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
+ * Handling login request
+ * @param {ExpressRequest} req - request
+ * @param {ExpressResponse} res - response
+ * @param {ExpressNextFunction} next - next callback
+ * @return {Promise<void>}
  */
 module.exports = async (req, res, next) => {
     try {
         const { username, password } = req.query;
-        const user = await User.findOne({
-            $or: [{ username }, { email: username }],
-        }).lean();
-
-        if (!user) throw new Error("User not found");
-        //----------------------------------------------------------//
+        const user = await User.authenticate(username, password);
         const token = sign(user, jwtSecret, { expiresIn: "10 h" });
         req.response = {
             code: 200,
