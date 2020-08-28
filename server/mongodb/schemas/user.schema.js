@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 const Crypto = require("crypto");
+const { userErrors } = require("../../messages/error/mongoose.error");
 
 const UserSchema = new Schema(
     {
@@ -10,7 +11,7 @@ const UserSchema = new Schema(
         salt: { type: String, select: false },
         socketId: { type: String, select: false },
     },
-    { timestamps: { createdAt: "created_at" }, versionKey: false }
+    { versionKey: false }
 );
 
 /**
@@ -59,10 +60,22 @@ UserSchema.statics.authenticate = async function (username, password) {
     })
         .select("+password +salt")
         .lean();
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(userErrors.user_not_found);
     if (!this.comparePasswords(password, user.password, user.salt))
-        throw new Error("Incorrect password");
+        throw new Error(userErrors.user_not_found);
+    delete user.password;
+    delete user.salt;
     return user;
+};
+
+/**
+ * Finding users which usernames includes in array
+ * @param {Array.<String>} usernames
+ */
+UserSchema.statics.findManyByUsernames = async function (usernames) {
+    const users = await User.find({ username: { $in: usernames } });
+    if (!users) throw new Error(userErrors.no_users);
+    return users;
 };
 
 const User = model("user", UserSchema);

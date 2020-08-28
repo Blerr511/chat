@@ -1,5 +1,4 @@
 const { Schema, model, SchemaTypes } = require("mongoose");
-
 const MessageSchema = new Schema(
     {
         data: { type: String, required: true },
@@ -8,7 +7,7 @@ const MessageSchema = new Schema(
     {
         timestamps: {
             createdAt: true,
-            currentTime: true,
+            currentTime: () => Date.now(),
             updatedAt: true,
         },
     }
@@ -16,4 +15,5 @@ const MessageSchema = new Schema(
 
 const Message = model("message", MessageSchema);
 
-module.exports = Message;
+module.exports.MessageModel = Message;
+module.exports.MessageSchema = MessageSchema;
