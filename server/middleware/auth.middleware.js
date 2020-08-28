@@ -15,8 +15,12 @@ module.exports = (req, res, next) => {
             token = token.slice(7, token.length);
         }
         verify(token, jwtSecret, (err, decoded) => {
+            if (decoded.exp < Date.now() / 1000)
+                throw new Error("Token is out of date");
             if (err) throw new Error("Token is not valid");
-            else req.user = data;
+            delete decoded.iat;
+            delete decoded.exp;
+            req.user = decoded;
         });
         req.response = {
             code: 200,
