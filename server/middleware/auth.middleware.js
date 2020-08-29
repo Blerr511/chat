@@ -14,9 +14,9 @@ module.exports = (req, res, next) => {
             token = token.slice(7, token.length);
         }
         verify(token, jwtSecret, (err, decoded) => {
+            if (err) throw new Error(err);
             if (decoded.exp < Date.now() / 1000)
                 throw new Error("Token is out of date");
-            if (err) throw new Error("Token is not valid");
             delete decoded.iat;
             delete decoded.exp;
             req.user = decoded;
@@ -24,8 +24,11 @@ module.exports = (req, res, next) => {
         req.response = {
             code: 200,
         };
+        next();
     } catch (error) {
-        catchHelper(req, error);
+        res.status(404).send({
+            status: "error",
+            message: error.message ?? error,
+        });
     }
-    next();
 };
