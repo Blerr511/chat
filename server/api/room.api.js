@@ -12,7 +12,9 @@ module.exports = async (req, res, next) => {
     try {
         const { members } = req.query;
         const { user } = req;
-        const room = await Room.getRoom(members, user);
+        const room = members
+            ? await Room.getRoom(members.split(","), user)
+            : await Room.getRoomsOfUser(user);
         req.response = {
             code: 200,
             status: true,
@@ -20,7 +22,7 @@ module.exports = async (req, res, next) => {
             data: room,
         };
     } catch (error) {
-        catchHelper(error);
+        catchHelper(req, error);
     }
 
     next();
