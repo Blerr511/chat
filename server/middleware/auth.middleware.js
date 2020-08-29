@@ -8,7 +8,6 @@ const catchHelper = require("../helpers/catch.helper");
  */
 module.exports = (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization;
         let token =
             req.headers["x-access-token"] || req.headers["authorization"];
         if (token && token.startsWith("Bearer ")) {
