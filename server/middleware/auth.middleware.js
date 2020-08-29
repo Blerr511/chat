@@ -1,4 +1,4 @@
-const { verify, JsonWebTokenError, decode } = require("jsonwebtoken");
+const { verify } = require("jsonwebtoken");
 const { jwtSecret } = require("../config");
 const catchHelper = require("../helpers/catch.helper");
 /**
