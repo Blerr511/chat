@@ -1,7 +1,6 @@
 const { Schema, model, SchemaTypes } = require("mongoose");
 const { MessageSchema, MessageModel } = require("./message.schema");
 const User = require("./user.schema");
-const { roomErrors } = require("../../messages/error/mongoose.error");
 
 const RoomSchema = new Schema(
     {
@@ -22,13 +21,15 @@ const RoomSchema = new Schema(
  */
 RoomSchema.statics.getRoom = async function (members, creator) {
     const users = await User.findManyByUsernames(members);
+    const admin = await User.findOne(creator);
+
+    if (users.length !== members.length) throw new Error("Users not found");
     const checkExistRoom = await this.findOne({
-        members: { $in: users },
+        members: users.concat(admin),
     })
         .populate("members admins")
         .lean();
     if (checkExistRoom) return checkExistRoom;
-    const admin = await User.findOne(creator);
     const room = new this({
         messages: [],
         admins: [admin],
@@ -39,10 +40,12 @@ RoomSchema.statics.getRoom = async function (members, creator) {
 };
 
 RoomSchema.statics.getRoomsOfUser = async function (user) {
-    const dbUser = await User.findOne(user);
-    if (!dbUser) throw new Error("User not found");
+    // const dbUser = await User.findOne(user);
+    if (!user) throw new Error("User not found");
 
-    const rooms = await this.find({ members: { $in: dbUser } });
+    const rooms = await this.find({ members: user })
+        .populate("members admins")
+        .lean();
     if (!rooms) throw new Error("Rooms not found");
     return rooms;
 };
