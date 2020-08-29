@@ -10,5 +10,7 @@ module.exports = {
     },
     rules: {
         "valid-jsdoc": 1,
+        camelcase: 0,
+        "no-shadow": 0,
     },
 };
