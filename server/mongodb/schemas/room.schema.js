@@ -1,5 +1,5 @@
 const { Schema, model, SchemaTypes } = require("mongoose");
-const { MessageSchema } = require("./message.schema");
+const { MessageSchema, MessageModel } = require("./message.schema");
 const User = require("./user.schema");
 const { roomErrors } = require("../../messages/error/mongoose.error");
 
@@ -13,18 +13,12 @@ const RoomSchema = new Schema(
         timestamps: { createdAt: true },
     }
 );
-// /**
-//  * @param {Array.<String>} members
-//  */
-// RoomSchema.statics.getRoom = async function (members) {
-//     const users = await User.findManyByUsernames(members);
-//     return Room.findOne({
-//         members: users,
-//     });
-// };
+
 /**
- * @param {User} creator
+ * Get or create room for members
  * @param {Array.<String>} members
+ * @param {User} creator
+ * @return {Promise<Room>}
  */
 RoomSchema.statics.getRoom = async function (members, creator) {
     const users = await User.findManyByUsernames(members);
@@ -44,9 +38,18 @@ RoomSchema.statics.getRoom = async function (members, creator) {
     return room;
 };
 
+RoomSchema.statics.getRoomsOfUser = async function (user) {
+    const dbUser = await User.findOne(user);
+    if (!dbUser) throw new Error("User not found");
+
+    const rooms = await this.find({ members: { $in: dbUser } });
+    if (!rooms) throw new Error("Rooms not found");
+    return rooms;
+};
+
 RoomSchema.methods.message = async function (user, data) {
     const sender = await User.findOne(user);
-    const message = new Message({ sender, data });
+    const message = new MessageModel({ sender, data });
     this.messages.push(message);
     await message.save();
     return this.save();

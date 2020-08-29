@@ -12,7 +12,6 @@ module.exports = async (req, res, next) => {
     try {
         const { members } = req.query;
         const { user } = req;
-        console.log(user);
         const room = await Room.getRoom(members, user);
         req.response = {
             code: 200,

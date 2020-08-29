@@ -10,6 +10,7 @@ const UserSchema = new Schema(
         password: { type: String, required: true, select: false },
         salt: { type: String, select: false },
         socketId: { type: String, select: false },
+        online: { type: Boolean, default: false },
     },
     { versionKey: false }
 );
