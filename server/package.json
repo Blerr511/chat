@@ -5,7 +5,11 @@
     "main": "app.js",
     "scripts": {
         "start": "set NODE_ENV=dev && nodemon app.js",
-        "prod": "set NODE_ENV=prod && nodemon app.js"
+        "prod": "set NODE_ENV=prod && nodemon app.js",
+        "test": "jest"
+    },
+    "jest": {
+        "testEnvironment": "node"
     },
     "author": "",
     "license": "ISC",
@@ -21,6 +25,7 @@
     "devDependencies": {
         "eslint": "^7.7.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^6.11.0"
+        "eslint-config-prettier": "^6.11.0",
+        "jest": "^26.4.2"
     }
 }
