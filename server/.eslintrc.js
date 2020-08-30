@@ -12,5 +12,6 @@ module.exports = {
         "valid-jsdoc": 1,
         camelcase: 0,
         "no-shadow": 0,
+        "new-cap": 0,
     },
 };

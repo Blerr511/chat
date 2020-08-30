@@ -26,9 +26,11 @@ module.exports = (req, res, next) => {
         };
         next();
     } catch (error) {
-        res.status(404).send({
-            status: "error",
-            message: error.message ?? error,
-        });
+        if (req.baseUrl === "/api/login") next();
+        else
+            res.status(404).send({
+                status: "error",
+                message: error.message ?? error,
+            });
     }
 };

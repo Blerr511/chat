@@ -1,3 +1,5 @@
+const router = require("express").Router();
+
 const Room = require("../mongodb/schemas/room.schema");
 const catchHelper = require("../helpers/catch.helper");
 
@@ -8,7 +10,7 @@ const catchHelper = require("../helpers/catch.helper");
  * @param {ExpressNextFunction} next - next callback
  * @return {Promise<void>}
  */
-module.exports = async (req, res, next) => {
+const handleGetRooms = async (req, res, next) => {
     try {
         const { members } = req.query;
         const { user } = req;
@@ -27,3 +29,7 @@ module.exports = async (req, res, next) => {
 
     next();
 };
+
+router.get("/", handleGetRooms);
+
+module.exports = router;

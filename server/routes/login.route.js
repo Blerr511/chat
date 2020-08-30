@@ -1,7 +1,10 @@
+const { sign } = require("jsonwebtoken");
+const router = require("express").Router();
+
 const catchHelper = require("../helpers/catch.helper");
 const User = require("../mongodb/schemas/user.schema");
 const { jwtSecret } = require("../config");
-const { sign } = require("jsonwebtoken");
+
 const { userErrors } = require("../messages/error/mongoose.error");
 /**
  * Handling login request
@@ -10,7 +13,7 @@ const { userErrors } = require("../messages/error/mongoose.error");
  * @param {ExpressNextFunction} next - next callback
  * @return {Promise<void>}
  */
-module.exports = async (req, res, next) => {
+const handleLogin = async (req, res, next) => {
     try {
         const { username, password } = req.query;
 
@@ -32,3 +35,7 @@ module.exports = async (req, res, next) => {
     }
     next();
 };
+
+router.get("/", handleLogin);
+
+module.exports = router;

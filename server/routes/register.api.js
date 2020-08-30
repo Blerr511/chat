@@ -1,6 +1,5 @@
 const User = require("../mongodb/schemas/user.schema");
-const Crypto = require("crypto");
-//----------------------------------------------------------//
+// ---------------------------------------------------------- //
 /**
  * @param {import("express").Request} req
  * @param {import("express").Response} res
@@ -14,14 +13,14 @@ module.exports = async (req, res, next) => {
         if (!(username && email && password))
             throw new Error("Username , password and email is required");
 
-        //----------------------------------------------------------//
+        // ----------------------------------------------------------//
         const existUser = await User.findOne({
             $or: [{ username }, { email }],
         });
 
         if (existUser)
             throw new Error("Username or email already using by other user");
-        //----------------------------------------------------------//
+        // ---------------------------------------------------------- //
 
         const user = new User({
             username,
