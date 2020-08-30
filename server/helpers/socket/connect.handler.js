@@ -1,5 +1,6 @@
-const config = require("../../config");
 const { verify } = require("jsonwebtoken");
+
+const config = require("../../config");
 const disconnectHandler = require("./disconnect.handler");
 const messageHandler = require("./message.handler");
 const {
@@ -12,21 +13,23 @@ const User = require("../../mongodb/schemas/user.schema");
 const Room = require("../../mongodb/schemas/room.schema");
 /**
  * Initiating socket io
- * @param {SocketIO.Server} io
+ * @param {Server} server
  */
-module.exports = (io) => {
+module.exports = (server) => {
+    const io = require("socket.io")(server);
     io.on("connect", (socket) => {
         delete io.sockets.connected[socket.id];
         const verifyOptions = {
             timeout: 3000,
             token: config.jwtSecret,
         };
-
+        
         const tmr = setTimeout(() => {
             socket.disconnect(d_SOCKET_UNAUTHORIZED);
         }, verifyOptions.timeout);
 
         const auth = (data) => {
+            if (!data) return socket.disconnect(d_SOCKET_UNAUTHORIZED);
             clearTimeout(tmr);
             verify(data.token, verifyOptions.token, (err, decoded) => {
                 if (err) {
@@ -42,7 +45,7 @@ module.exports = (io) => {
                     console.info(
                         `SOCKET ${socket.id} ` + "AUTHENTICATED".green
                     );
-                    User.findOne(socket.user, (err, doc) => {
+                    User.findById(socket.user?._id, (err, doc) => {
                         if (err) return false;
                         doc.online = true;
                         doc.save();

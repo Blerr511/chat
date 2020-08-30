@@ -17,7 +17,9 @@ module.exports = async (socket, io, data) => {
     }
     const room = await Room.findById(data.room);
     if (!room) return socket.disconnect(socketError.invalid_message);
-
-    io.to(data.room).emit("message", data.message);
-    room.message(socket.user, data.message);
+    const message = await room.message(socket.user?._id, data.message);
+    io.to(data.room).emit("message", {
+        room: data.room,
+        data: Object.assign(message, { sender: message.sender._id }),
+    });
 };
