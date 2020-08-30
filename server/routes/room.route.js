@@ -19,7 +19,7 @@ const handleGetRooms = async (req, res, next) => {
             : await Room.getRoomsOfUser(user);
         req.response = {
             code: 200,
-            status: true,
+            status: 'success',
             message: "get room",
             data: room,
         };
