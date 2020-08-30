@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { withStyles } from "@material-ui/core";
 import SideBar from "../../components/SideBar/SideBar";
 import { _getMyRooms } from "../../actions/room.action";
 import { connect } from "react-redux";
-import { Map } from "immutable";
+import { searchUsers, searchUsersFakeLoading } from "../../actions/user.action";
+import MessageBar from "./MessageBar";
 
 /**
  * Logged in user screen
@@ -11,30 +12,45 @@ import { Map } from "immutable";
  * @param {import("@material-ui/core").StyledComponentProps.<ClassKey>} props.classes
  * @param {getMyRooms} props.getMyRooms
  * @param {Map.<RoomsKeys,*>} props.rooms
+ * @param {Array.<User>} props.users
  */
-const UserScreen = ({ classes, rooms, getMyRooms }) => {
-    const [l,setL] = useState(true)
+const UserScreen = ({
+    classes,
+    rooms,
+    users,
+    getMyRooms,
+    searchUsers,
+    searchUsersFakeLoading,
+}) => {
     useEffect(() => {
-        setTimeout(()=>{
-            setL(false)
-        },3000)
         getMyRooms();
     }, [getMyRooms]);
-    const loading = rooms.get("loading");
+    const loading1 = rooms.get("loading");
+    const loading2 = users.get("loading");
     const myRooms = rooms.get("rooms");
+    const activeRoom = rooms.get("currentActive");
     return (
         <section className={classes.container}>
             <SideBar
-                loading={l}
+                loading={loading1 || loading2}
                 rooms={myRooms}
+                users={users}
+                searchUsers={searchUsers}
+                fakeLoading={searchUsersFakeLoading}
+                activeRoom={activeRoom}
             />
+            <MessageBar />
         </section>
     );
 };
 
 const styles = (theme) => ({
     container: {
-        backgroundColo: "red",
+        backgroundColor: "red",
+        flex: 1,
+        flexDirection: "row",
+        // width:"100%",
+        display: "flex",
     },
     modal: {
         display: "flex",
@@ -46,10 +62,13 @@ const styles = (theme) => ({
 
 const mapStateToProps = (state) => ({
     rooms: state.rooms,
+    users: state.users,
 });
 
 const mapDispatchToProps = {
     getMyRooms: _getMyRooms,
+    searchUsers,
+    searchUsersFakeLoading,
 };
 
 export default connect(
