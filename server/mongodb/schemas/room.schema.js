@@ -50,12 +50,13 @@ RoomSchema.statics.getRoomsOfUser = async function (user) {
     return rooms;
 };
 
-RoomSchema.methods.message = async function (user, data) {
-    const sender = await User.findOne(user);
+RoomSchema.methods.message = async function (userId, data) {
+    const sender = await User.findById(userId);
     const message = new MessageModel({ sender, data });
     this.messages.push(message);
     await message.save();
-    return this.save();
+    this.save();
+    return message.toObject();
 };
 
 const Room = model("room", RoomSchema);
