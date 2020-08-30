@@ -4,6 +4,12 @@ export const GET_MY_ROOMS_REQUEST = "GET_MY_ROOMS_REQUEST";
 export const GET_MY_ROOMS_SUCCESS = "GET_MY_ROOMS_SUCCESS";
 export const GET_MY_ROOMS_FAILURE = "GET_MY_ROOMS_FAILURE";
 
+export const SELECT_ACTIVE_ROOM = "SELECT_ACTIVE_ROOM";
+
+export const selectActiveRoom = (payload) => ({
+    type: SELECT_ACTIVE_ROOM,
+    payload,
+});
 
 export const _getMyRooms = () => (dispatch) => {
     const request = () => {
