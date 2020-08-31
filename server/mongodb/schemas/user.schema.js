@@ -5,12 +5,14 @@ const { userErrors } = require("../../messages/error/mongoose.error");
 
 const UserSchema = new Schema(
     {
-        username: { type: String, required: true, unique: true },
-        email: { type: String, required: true, unique: true },
-        password: { type: String, required: true, select: false },
+        username: { type: String, required: [true,'Username is required.'], unique: true },
+        email: { type: String, required: [true,'Email is required.'], unique: true },
+        password: { type: String, required: [true,'Password is required.'], select: false },
         salt: { type: String, select: false },
         socketId: { type: String, select: false },
         online: { type: Boolean, default: false },
+        firstName: { type: String, required: [true,'First Name is required.'] },
+        lastName: { type: String, required: [true,'Last Name is required.'] },
     },
     { versionKey: false }
 );

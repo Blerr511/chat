@@ -8,11 +8,18 @@ const User = require("../mongodb/schemas/user.schema");
 
 module.exports = async (req, res, next) => {
     try {
-        const { username, email, password } = req.body;
-
-        if (!(username && email && password))
-            throw new Error("Username , password and email is required");
-
+        const { username, email, password, firstName, lastName } = req.body;
+        const requiredFields = {
+            username: "Username",
+            email: "Email",
+            password: "password",
+            firstName: "First Name",
+            lastName: "Last Name",
+        };
+        for (const key in requiredFields) {
+            if (!req.body[key])
+                throw new Error(`${requiredFields[key]} is required`);
+        }
         // ----------------------------------------------------------//
         const existUser = await User.findOne({
             $or: [{ username }, { email }],
@@ -25,6 +32,8 @@ module.exports = async (req, res, next) => {
         const user = new User({
             username,
             email,
+            firstName,
+            lastName,
         });
         await user.setPassword(password);
         await user.save();
