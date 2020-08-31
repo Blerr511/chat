@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import {
     makeStyles,
     Paper,
@@ -10,7 +10,7 @@ import {
     IconButton,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
-import { useSelector, connect } from "react-redux";
+import { connect } from "react-redux";
 import { Map, List } from "immutable";
 import { sendSocketMessage } from "../../helpers/socketIo.middleware";
 const useStyles = makeStyles((styles) => ({
@@ -27,7 +27,6 @@ const useStyles = makeStyles((styles) => ({
         padding: "18px",
         display: "flex",
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-        flex: 1,
     },
     title: {
         fontSize: "20px",
@@ -131,11 +130,13 @@ const MessageItem = ({ avatar, text, sender, itsMe }) => {
 
 const MessageContainer = ({ data, myUser, getSender }) => {
     const classes = useStyles();
-
+    const $paper = useRef();
+    useEffect(() => {
+        $paper.current.scrollIntoView({ behavior: "smooth" });
+    }, [data.size]);
     return (
         <Box className={classes.MessageContainer}>
             <Paper className={classes.messageBox}>
-                {/* <div style={{ overflow: "auto", height: "100%" }}> */}
                 {data.map((el) => {
                     return (
                         <MessageItem
@@ -146,7 +147,7 @@ const MessageContainer = ({ data, myUser, getSender }) => {
                         />
                     );
                 })}
-                {/* </div> */}
+                <div ref={$paper}></div>
             </Paper>
         </Box>
     );
@@ -154,30 +155,38 @@ const MessageContainer = ({ data, myUser, getSender }) => {
 
 const MessageSender = ({ onSend }) => {
     const classes = useStyles();
-    const $inputValue = useRef("");
+    const $textField = useRef();
     return (
-        <Box className={classes.senderBox}>
-            <TextField
-                style={{
-                    height: "100%",
-                    margin: 0,
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-                onChange={(e) => ($inputValue.current = e.target.value)}
-                rows={1}
-                placeholder="Type a message"
-                fullWidth
-                margin="normal"
-            />
-            <IconButton
-                aria-label="delete"
-                style={{ width: "60px" }}
-                onClick={() => onSend($inputValue.current)}
-            >
-                <Send />
-            </IconButton>
-        </Box>
+        <form
+            onSubmit={(e) => {
+                e.preventDefault();
+                onSend($textField.current.value);
+                $textField.current.value = "";
+            }}
+        >
+            <Box className={classes.senderBox}>
+                <TextField
+                    style={{
+                        height: "100%",
+                        margin: 0,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                    rows={1}
+                    placeholder="Type a message"
+                    fullWidth
+                    margin="normal"
+                    inputRef={$textField}
+                />
+                <IconButton
+                    aria-label="send"
+                    style={{ width: "60px" }}
+                    type="submit"
+                >
+                    <Send />
+                </IconButton>
+            </Box>
+        </form>
     );
 };
 

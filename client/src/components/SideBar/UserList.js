@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -6,10 +6,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import { Button } from "@material-ui/core";
+import { Button, IconButton, Tooltip, TextField } from "@material-ui/core";
 import { selectActiveRoom } from "../../actions/room.action";
 import { useDispatch, useSelector } from "react-redux";
-
+import { Add } from "@material-ui/icons";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import useDebounce from "../../hooks/useDebounce.hook";
 const useStyles = makeStyles((theme) => {
     return {
         root: {
@@ -23,6 +25,7 @@ const useStyles = makeStyles((theme) => {
             width: "100%",
             display: "flex",
             justifyContent: "flex-start",
+            alignItems: "center",
         },
         listItemActive: {
             backgroundColor: theme.palette.primary.dark,
@@ -44,14 +47,59 @@ const findSender = (users, senderId) => {
  * @param {Object} props
  * @param {Array.<Room>} props.rooms
  */
-export default function UserList({ rooms, active, setActive }) {
+export default function UserList({
+    rooms,
+    active,
+    setActive,
+    users,
+    searchUsers,
+}) {
+    const [showSearchUser, setShowSearchUser] = useState(false);
     const classes = useStyles();
     const dispatch = useDispatch();
     const currentActive = useSelector((state) =>
         state.rooms.get("currentActive")
     );
+    const handleOnAddUserClick = () => setShowSearchUser((v) => !v);
+    const debounced = useDebounce((v) => {
+        searchUsers(v);
+    }, 300);
+    const handleOnChange = (e) => {
+        const v = e.target.value;
+        debounced(v);
+    };
     return (
         <List className={classes.root}>
+            {
+                <ListItem alignItems="flex-start">
+                    <Tooltip title="Add user" placement="right">
+                        <IconButton onClick={handleOnAddUserClick}>
+                            <Add />
+                        </IconButton>
+                    </Tooltip>
+                    <div className={classes.listItem}>
+                        {showSearchUser && (
+                            <Autocomplete
+                                getOptionLabel={(opt) => opt.username}
+                                style={{ width: "90%", marginLeft: "20px" }}
+                                options={users.get("data").toJS()}
+                                renderInput={(params) => (
+                                    <TextField
+                                        fullWidth
+                                        placeholder="Search by email address, phone number, or user UID"
+                                        onChange={handleOnChange}
+                                        InputProps={{
+                                            disableUnderline: true,
+                                            className: classes.searchInput,
+                                        }}
+                                        {...params}
+                                    />
+                                )}
+                            />
+                        )}
+                    </div>
+                </ListItem>
+            }
             {rooms.map((el, i) => {
                 const lastMessage = el.get("messages").reverse().toJS()[0];
                 const lastSender = findSender(

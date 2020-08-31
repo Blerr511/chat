@@ -44,7 +44,7 @@ const styles = (theme) => ({
     },
     contentWrapper: {
         // margin: "0px 16px 40px 16px",
-        flex: 23,
+        flex: 22,
     },
 });
 
@@ -62,6 +62,7 @@ function SideBar({
     onAddUser,
     loading,
     rooms,
+    refreshRooms,
     users,
     searchUsers,
     fakeLoading,
@@ -129,16 +130,8 @@ function SideBar({
                             />
                         </Grid>
                         <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className={classes.addUser}
-                                onClick={onAddUser}
-                            >
-                                Add user
-                            </Button>
                             <Tooltip title="Reload">
-                                <IconButton>
+                                <IconButton onClick={refreshRooms}>
                                     <RefreshIcon
                                         className={classes.block}
                                         color="inherit"
@@ -157,6 +150,8 @@ function SideBar({
                     </Typography>
                 ) : (
                     <UserList
+                        searchUsers={searchUsers}
+                        users={users}
                         active={active}
                         rooms={rooms.filter((el) => {
                             if (!filter) return true;
