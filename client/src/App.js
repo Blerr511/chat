@@ -8,8 +8,10 @@ import {
     ThemeProvider,
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import { login } from "./actions/auth.action";
+import { _login, _signUp, _clearAuthMessages } from "./actions/auth.action";
 import UserScreen from "./containers/UserScreen/UserScreen";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import SignUp from "./components/Auth/SignUp";
 const theme = createMuiTheme({
     palette: {
         // primary: {
@@ -30,40 +32,81 @@ const theme = createMuiTheme({
     },
 });
 
-const App = ({ auth, login }) => {
+const App = ({ auth, login, signUp, clear }) => {
     const loggedIn = auth.get("loggedIn");
+    const error = auth.get("error");
+    const loading = auth.get("loading");
+    const message = auth.get("message");
     useEffect(() => {
         login();
     }, [login]);
-    let Screen = null;
-    switch (loggedIn) {
-        case true:
-            Screen = <UserScreen />;
-            break;
-        case false:
-            Screen = <SignIn login={login} />;
-            break;
-        default:
-            Screen = (
-                <Container
-                    component="main"
-                    style={{
-                        height: "100vh",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <CircularProgress />
-                </Container>
-            );
-            break;
-    }
-    return <ThemeProvider theme={theme}>{Screen}</ThemeProvider>;
+    return (
+        <ThemeProvider theme={theme}>
+            <BrowserRouter>
+                <Switch>
+                    <Route
+                        path="/"
+                        exact
+                        render={({ location }) => {
+                            return loggedIn ? (
+                                <UserScreen />
+                            ) : loggedIn === false ? (
+                                <Redirect
+                                    to={{
+                                        pathname: "/login",
+                                        state: { from: location },
+                                    }}
+                                />
+                            ) : (
+                                <Container
+                                    component="main"
+                                    style={{
+                                        height: "100vh",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Container>
+                            );
+                        }}
+                    ></Route>
+                    <Route
+                        path={"/login"}
+                        render={({ location }) => {
+                            return loggedIn ? (
+                                <Redirect
+                                    to={{
+                                        pathname: "/",
+                                        state: { from: location },
+                                    }}
+                                />
+                            ) : (
+                                <SignIn login={login} loggedIn={loggedIn} />
+                            );
+                        }}
+                        exact
+                    ></Route>
+                    <Route path={"/signup"} exact>
+                        <SignUp
+                            signUp={signUp}
+                            error={error}
+                            message={message}
+                            loading={loading}
+                            clear={clear}
+                        />
+                    </Route>
+                </Switch>
+            </BrowserRouter>
+        </ThemeProvider>
+    );
 };
 
 const mapStateToProps = (state) => ({ auth: state.auth });
 const mapDispatchToProps = {
-    login,
+    login: _login,
+    signUp: _signUp,
+    clear: _clearAuthMessages,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(App);
