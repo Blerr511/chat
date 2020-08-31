@@ -5,18 +5,38 @@ const { userErrors } = require("../../messages/error/mongoose.error");
 
 const UserSchema = new Schema(
     {
-        username: { type: String, required: [true,'Username is required.'], unique: true },
-        email: { type: String, required: [true,'Email is required.'], unique: true },
-        password: { type: String, required: [true,'Password is required.'], select: false },
+        username: {
+            type: String,
+            required: [true, "Username is required."],
+            unique: true,
+            minlength: [6, "Username min length is 6 symbols"],
+        },
+        email: {
+            type: String,
+            required: [true, "Email is required."],
+            unique: true,
+        },
+        password: {
+            type: String,
+            required: [true, "Password is required."],
+            select: false,
+            minlength: [8, "Password needs to contains minimum 8 letters"],
+        },
         salt: { type: String, select: false },
         socketId: { type: String, select: false },
         online: { type: Boolean, default: false },
-        firstName: { type: String, required: [true,'First Name is required.'] },
-        lastName: { type: String, required: [true,'Last Name is required.'] },
+        firstName: {
+            type: String,
+            required: [true, "First Name is required."],
+        },
+        lastName: { type: String, required: [true, "Last Name is required."] },
     },
     { versionKey: false }
 );
-
+UserSchema.path("email").validate(function (email) {
+    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    return emailRegex.test(email); // Assuming email has a text attribute
+}, "Incorrect e-mail.");
 /**
  * Setting user password hash
  * @param {String} password

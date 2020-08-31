@@ -1,9 +1,7 @@
-const { response } = require("express");
-
 /**
  *
- * @param {Request} req
- * @param {Response} res
+ * @param {ExpressRequest} req
+ * @param {ExpressResponse} res
  */
 module.exports = (req, res) => {
     const { code, status, message, data } = req.response;

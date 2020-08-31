@@ -1,4 +1,5 @@
 const User = require("../mongodb/schemas/user.schema");
+const catchHelper = require("../helpers/catch.helper");
 // ---------------------------------------------------------- //
 /**
  * @param {import("express").Request} req
@@ -43,11 +44,7 @@ module.exports = async (req, res, next) => {
             code: 200,
         };
     } catch (error) {
-        req.response = {
-            status: "error",
-            message: error.message ?? error,
-            code: 400,
-        };
+        catchHelper(req, error);
     }
 
     next();
