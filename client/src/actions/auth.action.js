@@ -1,13 +1,38 @@
-import { authWithCredentials } from "../services/auth.service";
+import { auth, signUp } from "../services/auth.service";
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
 // ---------------------------------------------------------- //
-
+export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
+export const SIGNUP_FAILURE = "SIGNUP_FAILURE";
+// ---------------------------------------------------------- //
+export const CLEAR_AUTH_MESSAGES = "CLEAR_AUTH_MESSAGES";
 // ---------------------------------------------------------- //
 
-export const login = (username, password) => (dispatch) => {
+export const _clearAuthMessages = () => ({ type: CLEAR_AUTH_MESSAGES });
+
+export const _signUp = ({ firstName, lastName, username, email, password }) => (
+    dispatch
+) => {
+    const request = () => {
+        return { type: SIGNUP_REQUEST };
+    };
+    const success = (payload) => {
+        return { type: SIGNUP_SUCCESS, payload };
+    };
+    const failure = (error) => {
+        return { type: SIGNUP_FAILURE, payload: error };
+    };
+    dispatch(request());
+    signUp({ firstName, lastName, username, email, password }).then(
+        (data) => dispatch(success(data)),
+        (error) => dispatch(failure(error))
+    );
+};
+
+export const _login = (username, password) => (dispatch) => {
     const request = () => {
         return { type: LOGIN_REQUEST };
     };
@@ -19,7 +44,7 @@ export const login = (username, password) => (dispatch) => {
     };
 
     dispatch(request());
-    authWithCredentials(username, password).then(
+    auth(username, password).then(
         (data) => dispatch(success(data)),
         (error) => dispatch(failure(error))
     );
