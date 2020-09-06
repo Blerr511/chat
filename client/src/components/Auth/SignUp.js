@@ -3,8 +3,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -74,9 +72,7 @@ const SignUp = ({ signUp, error, message, loading, clear }) => {
     }, [error]);
     useEffect(() => {
         setSuccessMsg(Boolean(message));
-        let tmr = null;
-        if (Boolean(message))
-            tmr = setTimeout(() => history.push("/login"), 2000);
+        if (Boolean(message)) setTimeout(() => history.push("/login"), 2000);
     }, [message]);
     return (
         <Container component="main" maxWidth="xs">

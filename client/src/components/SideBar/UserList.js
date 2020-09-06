@@ -6,12 +6,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import { Button, IconButton, Tooltip, TextField } from "@material-ui/core";
+import { Button, IconButton, Tooltip } from "@material-ui/core";
 import { selectActiveRoom } from "../../actions/room.action";
 import { useDispatch, useSelector } from "react-redux";
 import { Add } from "@material-ui/icons";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import useDebounce from "../../hooks/useDebounce.hook";
 import Drawer from "./Drawer";
 const useStyles = makeStyles((theme) => {
     return {

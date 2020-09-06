@@ -1,4 +1,4 @@
-import { Map, fromJS, List } from "immutable";
+import { Map, fromJS } from "immutable";
 import {
     GET_MY_ROOMS_REQUEST,
     GET_MY_ROOMS_SUCCESS,
