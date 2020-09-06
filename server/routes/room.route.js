@@ -3,7 +3,6 @@ const router = require("express").Router();
 const Room = require("../mongodb/schemas/room.schema");
 const catchHelper = require("../helpers/catch.helper");
 const { io } = require("../helpers/createServer.helper");
-const User = require("../mongodb/schemas/user.schema");
 const { d_SOCKET_NEW_ROOM } = require("../constants/socketEvents.constant");
 
 /**
