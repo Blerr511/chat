@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
  */
 module.exports = () => {
     return mongoose
-        .connect(mongoString, {
+        .connect(process.env.MONGO_STRING || mongoString, {
             useCreateIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
