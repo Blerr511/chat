@@ -33,7 +33,7 @@ const auth = (state = initialState, { type, payload }) => {
         case LOGIN_FAILURE:
             return state.withMutations((mutable) => {
                 if (mutable.get("loggedIn") !== null)
-                    mutable.set("error", payload);
+                    mutable.set("error", String(payload));
                 mutable.set("loading", false);
                 mutable.set("loggedIn", false);
                 return mutable;
@@ -46,7 +46,7 @@ const auth = (state = initialState, { type, payload }) => {
         case SIGNUP_SUCCESS:
             return state.set("loading", false).set("message", payload);
         case SIGNUP_FAILURE:
-            return state.set("loading", false).set("error", payload);
+            return state.set("loading", false).set("error", String(payload));
         case CLEAR_AUTH_MESSAGES:
             return state.set("error", null).set("message", null);
         default:

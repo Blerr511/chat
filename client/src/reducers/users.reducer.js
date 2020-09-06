@@ -27,7 +27,7 @@ const users = (state = initialState, { type, payload }) => {
         case SEARCH_USERS_FAILURE:
             return state.withMutations((mutable) => {
                 mutable.set("loading", false);
-                mutable.set("error", payload);
+                mutable.set("error", String(payload));
                 mutable.set("data", List([]));
                 mutable.set("message", null);
                 return mutable;

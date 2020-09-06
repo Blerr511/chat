@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,7 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
-import { Grid, Link as MuiLink } from "@material-ui/core";
+import { Grid, Link as MuiLink, Collapse } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -33,14 +34,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignIn({ login, loggedIn }) {
+export default function SignIn({ login, loggedIn, error, clear }) {
     const classes = useStyles();
     const $username = useRef();
     const $password = useRef();
     const history = useHistory();
+    const [errorMsg, setErrorMsg] = useState(false);
     const handleSubmit = () => {
         login($username.current, $password.current);
     };
+    useEffect(() => {
+        setErrorMsg(Boolean(error));
+    }, [error]);
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -52,6 +57,17 @@ export default function SignIn({ login, loggedIn }) {
                     Sign in
                 </Typography>
                 <div className={classes.form} noValidate>
+                    <Grid item xs={12} style={{ height: "100%" }}>
+                        <Collapse in={errorMsg} onExited={clear}>
+                            <Alert
+                                severity="error"
+                                onClose={() => setErrorMsg(false)}
+                            >
+                                <AlertTitle>Error</AlertTitle>
+                                {error}
+                            </Alert>
+                        </Collapse>
+                    </Grid>
                     <TextField
                         variant="outlined"
                         margin="normal"

@@ -83,7 +83,12 @@ const App = ({ auth, login, signUp, clear }) => {
                                     }}
                                 />
                             ) : (
-                                <SignIn login={login} loggedIn={loggedIn} />
+                                <SignIn
+                                    login={login}
+                                    loggedIn={loggedIn}
+                                    error={error}
+                                    clear={clear}
+                                />
                             );
                         }}
                         exact
