@@ -34,6 +34,6 @@ app.get("/*", (req, res) => {
 connectMongo();
 connectHandler(io);
 // ---------------------------------------------------------- //
-server.listen(config.PORT, () => {
+server.listen(process.env.PORT || config.PORT, () => {
     console.info("Listening to port - " + config.PORT.toString().blue);
 });
