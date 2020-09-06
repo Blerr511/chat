@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Add } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import useDebounce from "../../hooks/useDebounce.hook";
+import Drawer from "./Drawer";
 const useStyles = makeStyles((theme) => {
     return {
         root: {
@@ -53,6 +54,7 @@ export default function UserList({
     setActive,
     users,
     searchUsers,
+    getMyRooms,
 }) {
     const [showSearchUser, setShowSearchUser] = useState(false);
     const classes = useStyles();
@@ -61,100 +63,106 @@ export default function UserList({
         state.rooms.get("currentActive")
     );
     const handleOnAddUserClick = () => setShowSearchUser((v) => !v);
-    const debounced = useDebounce((v) => {
-        searchUsers(v);
-    }, 300);
-    const handleOnChange = (e) => {
-        const v = e.target.value;
-        debounced(v);
+    const handleOnClose = (users) => {
+        setShowSearchUser(false);
+        if (users?.size > 0) {
+            getMyRooms(users.map((el) => el.get("username")).join(","));
+        }
     };
+    const handleOnOpen = () => setShowSearchUser(true);
     return (
-        <List className={classes.root}>
-            {
-                <ListItem alignItems="flex-start">
-                    <Tooltip title="Add user" placement="right">
-                        <IconButton onClick={handleOnAddUserClick}>
-                            <Add />
-                        </IconButton>
-                    </Tooltip>
-                    <div className={classes.listItem}>
-                        {showSearchUser && (
-                            <Autocomplete
-                                getOptionLabel={(opt) => opt.username}
-                                style={{ width: "90%", marginLeft: "20px" }}
-                                options={users.get("data").toJS()}
-                                renderInput={(params) => (
-                                    <TextField
-                                        fullWidth
-                                        placeholder="Search by email address, phone number, or user UID"
-                                        onChange={handleOnChange}
-                                        InputProps={{
-                                            disableUnderline: true,
-                                            className: classes.searchInput,
-                                        }}
-                                        {...params}
-                                    />
-                                )}
-                            />
-                        )}
-                    </div>
-                </ListItem>
-            }
-            {rooms.map((el, i) => {
-                const lastMessage = el.get("messages").reverse().toJS()[0];
-                const lastSender = findSender(
-                    el.get("members").toJS(),
-                    lastMessage?.sender
-                );
-                return (
-                    <div key={el.get("_id")}>
-                        <ListItem alignItems="flex-start">
-                            <Button
-                                variant="contained"
-                                color={
-                                    currentActive === i ? "primary" : "default"
-                                }
-                                className={classes.listItem}
-                                onClick={() => dispatch(selectActiveRoom(i))}
-                            >
-                                <ListItemAvatar style={{ marginTop: 0 }}>
-                                    <Avatar
-                                        alt={el
-                                            .getIn(["members", 0, "username"])
-                                            .toUpperCase()}
-                                        src="/static/images/avatar/2.jpg"
-                                    />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={el
-                                        .getIn(["members"])
-                                        .map((el) => el.get("username"))
-                                        .toJS()
-                                        .join(" , ")
-                                        .toUpperCase()}
-                                    style={{
-                                        textAlign: "left",
-                                    }}
-                                    primaryTypographyProps={{ noWrap: true }}
-                                    secondary={
-                                        <Typography color="textPrimary" noWrap>
-                                            {lastSender &&
-                                                lastSender?.username + " - "}
-                                            <span
-                                                className={
-                                                    classes.listItemLastMessage
-                                                }
-                                            >
-                                                {lastMessage?.data}
-                                            </span>
-                                        </Typography>
+        <>
+            <Drawer
+                open={showSearchUser}
+                onOpen={handleOnOpen}
+                onClose={handleOnClose}
+                searchUsers={searchUsers}
+                users={users}
+            />
+            <List className={classes.root}>
+                {rooms.size === 0 && (
+                    <ListItem alignItems="flex-start">
+                        <Typography color="textSecondary" align="center">
+                            No users for this project yet
+                        </Typography>
+                    </ListItem>
+                )}
+                {
+                    <ListItem alignItems="flex-start">
+                        <Tooltip title="Add user" placement="right">
+                            <IconButton onClick={handleOnAddUserClick}>
+                                <Add />
+                            </IconButton>
+                        </Tooltip>
+                    </ListItem>
+                }
+                {rooms.map((el, i) => {
+                    const lastMessage = el.get("messages").reverse().toJS()[0];
+                    const lastSender = findSender(
+                        el.get("members").toJS(),
+                        lastMessage?.sender
+                    );
+                    return (
+                        <div key={el.get("_id")}>
+                            <ListItem alignItems="flex-start">
+                                <Button
+                                    variant="contained"
+                                    color={
+                                        currentActive === i
+                                            ? "primary"
+                                            : "default"
                                     }
-                                />
-                            </Button>
-                        </ListItem>
-                    </div>
-                );
-            })}
-        </List>
+                                    className={classes.listItem}
+                                    onClick={() =>
+                                        dispatch(selectActiveRoom(i))
+                                    }
+                                >
+                                    <ListItemAvatar style={{ marginTop: 0 }}>
+                                        <Avatar
+                                            alt={el.getIn([
+                                                "members",
+                                                0,
+                                                "firstName",
+                                            ])}
+                                            src="/static/images/avatar/2.jpg"
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={el
+                                            .getIn(["members"])
+                                            .map((el) => el.get("firstName"))
+                                            .toJS()
+                                            .join(" , ")}
+                                        style={{
+                                            textAlign: "left",
+                                        }}
+                                        primaryTypographyProps={{
+                                            noWrap: true,
+                                        }}
+                                        secondary={
+                                            <Typography
+                                                color="textPrimary"
+                                                noWrap
+                                            >
+                                                {lastSender &&
+                                                    lastSender?.firstName +
+                                                        " - "}
+                                                <span
+                                                    className={
+                                                        classes.listItemLastMessage
+                                                    }
+                                                >
+                                                    {lastMessage?.data}
+                                                </span>
+                                            </Typography>
+                                        }
+                                    />
+                                </Button>
+                            </ListItem>
+                        </div>
+                    );
+                })}
+            </List>
+        </>
     );
 }

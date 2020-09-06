@@ -33,6 +33,7 @@ const UserScreen = ({
         <section className={classes.container}>
             <SideBar
                 refreshRooms={getMyRooms}
+                getMyRooms={getMyRooms}
                 loading={loading1 || loading2}
                 rooms={myRooms}
                 users={users}

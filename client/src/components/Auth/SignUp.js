@@ -77,7 +77,6 @@ const SignUp = ({ signUp, error, message, loading, clear }) => {
         let tmr = null;
         if (Boolean(message))
             tmr = setTimeout(() => history.push("/login"), 2000);
-        return () => clearTimeout(tmr);
     }, [message]);
     return (
         <Container component="main" maxWidth="xs">

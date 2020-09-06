@@ -67,6 +67,7 @@ function SideBar({
     searchUsers,
     fakeLoading,
     active,
+    getMyRooms,
 }) {
     const [filter, setFilter] = useState("");
     const ctx = Set(
@@ -131,7 +132,7 @@ function SideBar({
                         </Grid>
                         <Grid item>
                             <Tooltip title="Reload">
-                                <IconButton onClick={refreshRooms}>
+                                <IconButton onClick={() => refreshRooms()}>
                                     <RefreshIcon
                                         className={classes.block}
                                         color="inherit"
@@ -144,15 +145,12 @@ function SideBar({
             </AppBar>
             <div style={{ height: "4px" }}>{loading && <LinearProgress />}</div>
             <div className={classes.contentWrapper}>
-                {rooms.length === 0 ? (
-                    <Typography color="textSecondary" align="center">
-                        No users for this project yet
-                    </Typography>
-                ) : (
+                {
                     <UserList
                         searchUsers={searchUsers}
                         users={users}
                         active={active}
+                        getMyRooms={getMyRooms}
                         rooms={rooms.filter((el) => {
                             if (!filter) return true;
                             return (
@@ -165,7 +163,7 @@ function SideBar({
                             );
                         })}
                     />
-                )}
+                }
             </div>
         </Paper>
     );
