@@ -23,7 +23,11 @@ const handleLogin = async (req, res, next) => {
         }
 
         const user = req.user ?? (await User.authenticate(username, password));
-        const token = sign(user, jwtSecret, { expiresIn: "10 h" });
+        const token = sign(
+            { _id: user._id, username: user.username, email: user.email },
+            jwtSecret,
+            { expiresIn: "10 h" }
+        );
         req.response = {
             code: 200,
             status: "success",

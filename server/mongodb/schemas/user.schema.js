@@ -23,7 +23,7 @@ const UserSchema = new Schema(
             minlength: [8, "Password needs to contains minimum 8 letters"],
         },
         salt: { type: String, select: false },
-        socketId: { type: String, select: false },
+        socketId: { type: String },
         online: { type: Boolean, default: false },
         firstName: {
             type: String,

@@ -15,13 +15,19 @@ const handleSearch = async (req, res, next) => {
     try {
         const { search, page = 0, limit = 500 } = req.query;
         if (search === "") throw new Error(userErrors.no_users);
-
         const users = await User.find(
             search
                 ? {
-                      $or: [
-                          { username: { $regex: search } },
-                          { email: { $regex: search } },
+                      $and: [
+                          {
+                              $or: [
+                                  { username: { $regex: search } },
+                                  { email: { $regex: search } },
+                              ],
+                          },
+                          {
+                              _id: { $ne: req.user._id },
+                          },
                       ],
                   }
                 : {}

@@ -1,8 +1,7 @@
 require("colors");
 const config = require("./config");
-const app = require("express")();
-const http = require("http");
-const server = http.createServer(app);
+const { server, io, app } = require("./helpers/createServer.helper");
+
 const bodyParser = require("body-parser");
 const cors = require("cors");
 // ---------------------------------------------------------- //
@@ -28,7 +27,7 @@ app.use("/api/users", usersRoute, responseMiddleware);
 
 // ---------- CONNECTING TO MONGODB AND SOCKET IO ----------- //
 connectMongo();
-connectHandler(server);
+connectHandler(io);
 // ---------------------------------------------------------- //
 server.listen(config.PORT, () => {
     console.info("Listening to port - " + config.PORT.toString().blue);

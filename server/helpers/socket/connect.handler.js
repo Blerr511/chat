@@ -13,17 +13,16 @@ const User = require("../../mongodb/schemas/user.schema");
 const Room = require("../../mongodb/schemas/room.schema");
 /**
  * Initiating socket io
- * @param {Server} server
+ * @param {SocketIO.Server} io
  */
-module.exports = (server) => {
-    const io = require("socket.io")(server);
+module.exports = (io) => {
     io.on("connect", (socket) => {
         delete io.sockets.connected[socket.id];
         const verifyOptions = {
             timeout: 3000,
             token: config.jwtSecret,
         };
-        
+
         const tmr = setTimeout(() => {
             socket.disconnect(d_SOCKET_UNAUTHORIZED);
         }, verifyOptions.timeout);
@@ -48,6 +47,7 @@ module.exports = (server) => {
                     User.findById(socket.user?._id, (err, doc) => {
                         if (err) return false;
                         doc.online = true;
+                        doc.socketId = socket.id;
                         doc.save();
                     });
                     Room.getRoomsOfUser(socket.user)

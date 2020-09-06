@@ -9,7 +9,7 @@ const RoomSchema = new Schema(
         admins: [{ type: SchemaTypes.ObjectId, ref: "user" }],
     },
     {
-        timestamps: { createdAt: true },
+        timestamps: false,
     }
 );
 
@@ -21,22 +21,21 @@ const RoomSchema = new Schema(
  */
 RoomSchema.statics.getRoom = async function (members, creator) {
     const users = await User.findManyByUsernames(members);
-    const admin = await User.findOne(creator);
-
+    const admin = await User.findOne(creator).select("+socketId");
     if (users.length !== members.length) throw new Error("Users not found");
     const checkExistRoom = await this.findOne({
         members: users.concat(admin),
     })
         .populate("members admins")
         .lean();
-    if (checkExistRoom) return checkExistRoom;
+    if (checkExistRoom) return Object.assign(checkExistRoom, { isNew: false });
     const room = new this({
         messages: [],
         admins: [admin],
         members: [...users, admin],
     });
     await room.save();
-    return room;
+    return Object.assign(room, { isNew: true });
 };
 
 RoomSchema.statics.getRoomsOfUser = async function (user) {
