@@ -11,7 +11,7 @@ export const selectActiveRoom = (payload) => ({
     payload,
 });
 
-export const _getMyRooms = () => (dispatch) => {
+export const _getMyRooms = (members) => (dispatch) => {
     const request = () => {
         return { type: GET_MY_ROOMS_REQUEST };
     };
@@ -22,7 +22,7 @@ export const _getMyRooms = () => (dispatch) => {
         return { type: GET_MY_ROOMS_FAILURE, payload: error };
     };
     dispatch(request());
-    roomServices.getMyRooms().then(
+    roomServices.getMyRooms(members).then(
         (data) => dispatch(success(data)),
         (error) => dispatch(failure(error))
     );

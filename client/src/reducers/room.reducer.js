@@ -20,7 +20,8 @@ const rooms = (state = initialState, { type, payload }) => {
         case GET_MY_ROOMS_SUCCESS:
             return state.withMutations((mutable) => {
                 mutable.set("loading", false);
-                mutable.set("rooms", fromJS(payload));
+                if (payload instanceof Array)
+                    mutable.set("rooms", fromJS(payload));
                 return mutable;
             });
         case GET_MY_ROOMS_FAILURE:
