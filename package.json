@@ -4,6 +4,7 @@
     "description": "",
     "main": "server/app.js",
     "scripts": {
+        "heroku-prebuild":"cd client && npm i && cd ../server && npm i",
         "start": "cd server && npm start",
         "build": "cd client && npm run build && move ./build ../server/build",
         "server": "cd server && npm start",
