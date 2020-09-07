@@ -14,5 +14,8 @@ module.exports = () => {
         })
         .then(() => {
             console.log("Connected to mongodb " + mongoString.blue);
-        });
+        }).catch(err=>{
+            console.log(`Connection to mongodb ${process.env.MONGO_STRING || mongoString} failed`)
+            console.error(err)
+        })
 };
