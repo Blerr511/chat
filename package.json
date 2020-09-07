@@ -1,21 +1,27 @@
 {
-  "name": "chat",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "server":"cd server && npm start",
-    "client":"cd client && npm start",
-    "lint": "eslint ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Blerr511/chat.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Blerr511/chat/issues"
-  },
-  "homepage": "https://github.com/Blerr511/chat#readme"
+    "name": "chat",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server/app.js",
+    "scripts": {
+        "start": "cd server && npm start",
+        "build": "cd client && npm run build && move ./build ../server/build",
+        "server": "cd server && npm start",
+        "client": "cd client && npm start",
+        "lint": "eslint ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Blerr511/chat.git"
+    },
+    "author": "Blerr",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Blerr511/chat/issues"
+    },
+    "homepage": "https://github.com/Blerr511/chat#readme",
+    "engines": {
+        "node": "14.x",
+        "npm": "6.14.7"
+    }
 }
