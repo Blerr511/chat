@@ -5,6 +5,7 @@
     "main": "app.js",
     "scripts": {
         "start": "set NODE_ENV=dev && nodemon app.js",
+        "heroku-start": "node app.js",
         "prod": "set NODE_ENV=prod && nodemon app.js",
         "test": "jest"
     },

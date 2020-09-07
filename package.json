@@ -5,7 +5,7 @@
     "main": "server/app.js",
     "scripts": {
         "postinstall": "cd client && npm i && cd ../server && npm i",
-        "start": "cd server && npm start",
+        "start": "cd server && npm run heroku-start",
         "build": "cd client && npm run build && mv ./build ../server/build",
         "server": "cd server && npm start",
         "client": "cd client && npm start",
