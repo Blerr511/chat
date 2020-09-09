@@ -23,7 +23,7 @@ const useStyles = makeStyles((styles) => ({
         justifyContent: "space-between",
     },
     headerContainer: {
-        backgroundColor: styles.palette.grey[100],
+        backgroundColor: styles.palette.background.default,
         padding: "18px",
         display: "flex",
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
@@ -32,17 +32,19 @@ const useStyles = makeStyles((styles) => ({
         fontSize: "20px",
     },
     MessageContainer: {
-        padding: "20px",
         backgroundColor: styles.palette.background.paper,
         flex: 21,
-        height: "100%",
         overflow: "hidden",
+        position: "relative",
     },
     messageBox: {
-        backgroundColor: styles.palette.grey[100],
-        height: "100%",
+        backgroundColor: styles.palette.background.default,
         overflow: "auto",
-        paddingTop: "20px",
+        position: "absolute",
+        top: styles.spacing(2),
+        right: styles.spacing(2),
+        bottom: styles.spacing(2),
+        left: styles.spacing(2),
     },
     listItemText: {
         fontSize: "16px",
@@ -54,7 +56,7 @@ const useStyles = makeStyles((styles) => ({
         padding: "10px",
     },
     senderBox: {
-        backgroundColor: styles.palette.grey[100],
+        backgroundColor: styles.palette.background.default,
         padding: "20px",
         marginTop: "20px",
         display: "flex",

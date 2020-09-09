@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -11,12 +11,14 @@ import { withStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, makeStyles } from "@material-ui/core";
 
 import UserList from "./UserList";
 import { Set } from "immutable";
+import { ThemeController } from "../../App";
+import { WbSunny, Brightness3 } from "@material-ui/icons";
 
-const styles = (theme) => ({
+const styles = makeStyles((theme) => ({
     paper: {
         flex: 1,
         maxWidth: 768,
@@ -29,6 +31,7 @@ const styles = (theme) => ({
     searchBar: {
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
         borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+        backgroundColor: theme.palette.background.default,
         flex: 1,
     },
     searchInput: {
@@ -36,6 +39,7 @@ const styles = (theme) => ({
     },
     block: {
         display: "block",
+        color: theme.palette.text.primary,
     },
     addUser: {
         marginRight: theme.spacing(1),
@@ -44,7 +48,7 @@ const styles = (theme) => ({
         // margin: "0px 16px 40px 16px",
         flex: 22,
     },
-});
+}));
 
 /**
  * Chat side container , showing users and searchbar
@@ -56,7 +60,6 @@ const styles = (theme) => ({
  * @param {Array.<User>} props.users
  */
 function SideBar({
-    classes,
     onAddUser,
     loading,
     rooms,
@@ -67,6 +70,7 @@ function SideBar({
     active,
     getMyRooms,
 }) {
+    const classes = styles();
     const [filter, setFilter] = useState("");
     const ctx = Set(
         rooms.reduce(
@@ -75,7 +79,7 @@ function SideBar({
                     b
                         .get("members")
                         .map((el) => {
-                            return el.get("username");
+                            return el.get("firstName");
                         })
                         .toJS()
                 ),
@@ -91,7 +95,7 @@ function SideBar({
         // fakeLoading();
         // debouncedSearch(v);
     };
-
+    const [theme, setTheme] = useContext(ThemeController);
     return (
         <Paper className={classes.paper}>
             <AppBar
@@ -111,7 +115,6 @@ function SideBar({
                         <Grid item xs>
                             <Autocomplete
                                 id="combo-box-demo"
-                                // getOptionLabel={(opt) => opt.username}
                                 onChange={(e, v) => setFilter(v)}
                                 options={ctx}
                                 renderInput={(params) => (
@@ -130,11 +133,24 @@ function SideBar({
                         </Grid>
                         <Grid item>
                             <Tooltip title="Reload">
-                                <IconButton onClick={() => refreshRooms()}>
-                                    <RefreshIcon
-                                        className={classes.block}
-                                        color="inherit"
-                                    />
+                                <IconButton
+                                    onClick={() =>
+                                        setTheme(
+                                            theme === "light" ? "dark" : "light"
+                                        )
+                                    }
+                                >
+                                    {theme === "light" ? (
+                                        <Brightness3
+                                            className={classes.block}
+                                            color="inherit"
+                                        />
+                                    ) : (
+                                        <WbSunny
+                                            className={classes.block}
+                                            color="inherit"
+                                        />
+                                    )}
                                 </IconButton>
                             </Tooltip>
                         </Grid>
@@ -154,7 +170,7 @@ function SideBar({
                             return (
                                 el
                                     .get("members")
-                                    .map((el) => el.get("username"))
+                                    .map((el) => el.get("firstName"))
                                     .toJS()
                                     .join(" ")
                                     .search(filter) !== -1
@@ -174,4 +190,4 @@ SideBar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SideBar);
+export default SideBar;

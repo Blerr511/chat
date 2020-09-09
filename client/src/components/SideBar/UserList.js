@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => {
             backgroundColor: theme.palette.primary.dark,
         },
         listItemLastMessage: {
-            color: theme.palette.text.disabled,
+            color: theme.palette.text.secondary,
+            opacity: 0.7,
         },
     };
 });
@@ -88,7 +89,10 @@ export default function UserList({
                 {
                     <ListItem alignItems="flex-start">
                         <Tooltip title="Add user" placement="right">
-                            <IconButton onClick={handleOnAddUserClick}>
+                            <IconButton
+                                onClick={handleOnAddUserClick}
+                                color="primary"
+                            >
                                 <Add />
                             </IconButton>
                         </Tooltip>
@@ -107,8 +111,8 @@ export default function UserList({
                                     variant="contained"
                                     color={
                                         currentActive === i
-                                            ? "primary"
-                                            : "default"
+                                            ? "default"
+                                            : "secondary"
                                     }
                                     className={classes.listItem}
                                     onClick={() =>
@@ -139,7 +143,7 @@ export default function UserList({
                                         }}
                                         secondary={
                                             <Typography
-                                                color="textPrimary"
+                                                color="textSecondary"
                                                 noWrap
                                             >
                                                 {lastSender &&
