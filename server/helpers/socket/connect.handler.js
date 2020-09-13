@@ -1,5 +1,5 @@
 const { verify } = require("jsonwebtoken");
-
+require("colors");
 const config = require("../../config");
 const disconnectHandler = require("./disconnect.handler");
 const messageHandler = require("./message.handler");
@@ -10,7 +10,8 @@ const {
     d_SOCKET_MESSAGE,
 } = require("../../constants/socketEvents.constant");
 const User = require("../../mongodb/schemas/user.schema");
-const Room = require("../../mongodb/schemas/room.schema");
+const { Room } = require("../../mongodb/schemas/room.schema");
+const { addSocketUser } = require("../socket.helper");
 /**
  * Initiating socket io
  * @param {SocketIO.Server} io
@@ -39,8 +40,10 @@ module.exports = (io) => {
                     delete decoded.iat;
                     delete decoded.exp;
                     socket.user = decoded;
+                    addSocketUser(decoded._id, socket.id);
                     socket.connectedAt = new Date();
                     socket.emit(d_SOCKET_AUTHENTICATED);
+                    if (process.env.NODE_ENV === "development")
                     console.info(
                         `SOCKET ${socket.id} ` + "AUTHENTICATED".green
                     );

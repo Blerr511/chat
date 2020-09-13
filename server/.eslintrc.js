@@ -9,7 +9,7 @@ module.exports = {
         ecmaVersion: 11,
     },
     rules: {
-        "valid-jsdoc": 1,
+        "valid-jsdoc": 0,
         camelcase: 0,
         "no-shadow": 0,
         "new-cap": 0,

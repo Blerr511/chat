@@ -1,4 +1,5 @@
 const User = require("../../mongodb/schemas/user.schema");
+const { deleteSocketUser } = require("../socket.helper");
 
 module.exports = (socket) => {
     User.findOne(socket.user?._id, (err, user) => {
@@ -7,6 +8,7 @@ module.exports = (socket) => {
         user.socketId = null;
         user.save();
     });
-
-    console.info(`SOCKET ${socket.id} ` + "DISCONNECTED".red);
+    deleteSocketUser(socket.user?._id);
+    if (process.env.NODE_ENV === "development")
+        console.info(`SOCKET ${socket.id} ` + "DISCONNECTED".red);
 };

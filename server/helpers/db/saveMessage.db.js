@@ -1,4 +1,4 @@
-const Room = require("../../mongodb/schemas/room.schema");
+const { Room } = require("../../mongodb/schemas/room.schema");
 const {
     roomErrors,
     userErrors,

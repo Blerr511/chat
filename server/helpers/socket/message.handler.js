@@ -1,5 +1,5 @@
 const socketError = require("../../messages/error/socket.error");
-const Room = require("../../mongodb/schemas/room.schema");
+const { Room } = require("../../mongodb/schemas/room.schema");
 
 /**
  * Handle on message event

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const Room = require("../mongodb/schemas/room.schema");
+const { Room } = require("../mongodb/schemas/room.schema");
 const catchHelper = require("../helpers/catch.helper");
 const { io } = require("../helpers/createServer.helper");
 const { d_SOCKET_NEW_ROOM } = require("../constants/socketEvents.constant");
@@ -21,7 +21,6 @@ const handleGetRooms = async (req, res, next) => {
             const room = await Room.getRoom(members.split(","), user);
             isNew = room.isNew;
             if (isNew) {
-                console.log(room.members.map((el) => el.socketId));
                 room.members.map((user) => {
                     if (user.socketId) {
                         io.sockets.connected[user.socketId].join(room._id);

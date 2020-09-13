@@ -1,6 +1,7 @@
 module.exports.roomErrors = {
     room_exists: "Room already exists",
     room_not_exists: "Room not exists",
+    server_not_exists: "Server not exists",
 };
 
 module.exports.userErrors = {
