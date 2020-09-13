@@ -17,6 +17,7 @@ const connectHandler = require("./helpers/socket/connect.handler");
 const roomApi = require("./routes/room.route");
 const usersRoute = require("./routes/users.route");
 const serverRoute = require("./routes/server.route");
+const { configureAwsS3 } = require("./helpers/multer.helper");
 // ----------------------------------------------s------------ //
 app.use(cors({ origin: config.corsOrigin }));
 app.use(bodyParser.json());
@@ -36,6 +37,7 @@ app.get("/*", (req, res) => {
 // ---------- CONNECTING TO MONGODB AND SOCKET IO ----------- //
 connectMongo();
 connectHandler(io);
+configureAwsS3();
 // ---------------------------------------------------------- //
 server.listen(process.env.PORT || config.PORT, () => {
     console.info("Listening to port - " + config.PORT.toString().blue);
