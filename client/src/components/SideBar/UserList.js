@@ -71,13 +71,13 @@ export default function UserList({
     const handleOnOpen = () => setShowSearchUser(true);
     return (
         <>
-            <Drawer
+            {/* <Drawer
                 open={showSearchUser}
                 onOpen={handleOnOpen}
                 onClose={handleOnClose}
                 searchUsers={searchUsers}
                 users={users}
-            />
+            /> */}
             <List className={classes.root}>
                 {rooms.size === 0 && (
                     <ListItem alignItems="flex-start">

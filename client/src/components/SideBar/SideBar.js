@@ -182,12 +182,4 @@ function SideBar({
         </Paper>
     );
 }
-// (
-//     rooms.map((el) => {
-//         return <p key={el._id}>{el._id}</p>;
-//     })
-SideBar.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
 export default SideBar;
