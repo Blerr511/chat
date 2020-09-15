@@ -3,7 +3,7 @@ const {
     userErrors,
     roomErrors,
 } = require("../../messages/error/mongoose.error");
-const { RoomSchema, Room } = require("./room.schema");
+const { RoomSchema } = require("./room.schema");
 
 const ServerSchema = new Schema({
     name: { type: String, required: [true, "Server name is required"] },
@@ -16,7 +16,7 @@ const ServerSchema = new Schema({
     ],
     admins: [{ type: Schema.Types.ObjectId, ref: "user" }],
     rooms: [{ type: RoomSchema }],
-    icon: { type: String, default: "" },
+    icon: { type: String, default: null },
 });
 
 ServerSchema.statics.getMyServers = async function (user) {
