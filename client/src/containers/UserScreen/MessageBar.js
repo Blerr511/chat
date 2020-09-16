@@ -16,14 +16,14 @@ import { sendSocketMessage } from "../../helpers/socketIo.middleware";
 const useStyles = makeStyles((styles) => ({
     paper: {
         backgroundColor: styles.palette.background.paper,
-        flex: 2,
+        flex: 4,
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: "100%",
         justifyContent: "space-between",
     },
     headerContainer: {
-        backgroundColor: styles.palette.background.default,
+        backgroundColor: styles.palette.background.paper,
         padding: "18px",
         display: "flex",
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
@@ -38,7 +38,7 @@ const useStyles = makeStyles((styles) => ({
         position: "relative",
     },
     messageBox: {
-        backgroundColor: styles.palette.background.default,
+        backgroundColor: styles.palette.background.paper,
         overflow: "auto",
         position: "absolute",
         top: styles.spacing(2),

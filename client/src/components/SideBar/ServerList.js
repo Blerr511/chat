@@ -1,5 +1,6 @@
 import {
     Avatar,
+    Divider,
     IconButton,
     ListItemAvatar,
     makeStyles,
@@ -9,6 +10,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { List } from "immutable";
 import { Add, Forum } from "@material-ui/icons";
+import { HoverSquare } from "../StyledComponents/HoverSquare.group";
 
 const styles = makeStyles((theme) => ({
     container: {
@@ -16,7 +18,6 @@ const styles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
         width: "70px",
-        backgroundColor: theme.palette.background.default,
         height: "100vh",
         overflow: "auto",
         direction: "ltr",
@@ -51,66 +52,32 @@ const useStylesBootstrap = makeStyles((theme) => ({
     },
 }));
 
-const useAvatarStyles = makeStyles((theme) => ({
-    root: {
-        position: "relative",
-        width: "50px",
-        height: "50px",
-        overflow: "visible",
-        "&[data-active='true'],&:hover": {
-            borderRadius: "10px",
-        },
-        "&::after": {
-            content: '""',
-            display: "block",
-            width: 5,
-            backgroundColor:
-                theme.palette.type === "dark"
-                    ? theme.palette.grey[100]
-                    : theme.palette.grey[600],
-            position: "absolute",
-            left: -14,
-            height: 25,
-            top: 13,
-            borderBottomRightRadius: 5,
-            borderTopRightRadius: 5,
-            opacity: 0,
-            transitionDuration: theme.transitions.duration.shorter,
-        },
-        "&:hover::after": {
-            opacity: 1,
-        },
-        "&[data-active='true']::after": {
-            opacity: 1,
-            height: 40,
-            top: 5,
-        },
-        transitionDuration: theme.transitions.duration.shorter,
-    },
-
-    colorDefault: {
-        "&[data-active='true'],&:hover": {
-            backgroundColor: theme.palette.primary.light,
-        },
-    },
-}));
-
-const ServerList = ({ servers = List(), handleCreateClick }) => {
+const ServerList = ({
+    servers = List(),
+    handleCreateClick,
+    active,
+    setActive,
+}) => {
     const classes = styles();
     const tooltipClasses = useStylesBootstrap();
-    const avatarClasses = useAvatarStyles();
-    const [active, setActive] = useState(0);
+    // const avatarClasses = useAvatarStyles();
     return (
         <div className={classes.container}>
             <div>
                 <ListItemAvatar className={classes.avatarContainer}>
-                    <IconButton
+                    <HoverSquare.IconButton
                         style={{ padding: "10px" }}
-                        onClick={handleCreateClick}
+                        onClick={() => {
+                            setActive(null);
+                        }}
+                        data-active={active === null}
                     >
                         <Forum style={{ width: "30px", height: "30px" }} />
-                    </IconButton>
+                    </HoverSquare.IconButton>
                 </ListItemAvatar>
+                <Divider
+                    style={{ width: "50%", position: "relative", left: "25%" }}
+                />
                 {servers.map((el, i) => {
                     return (
                         <ListItemAvatar
@@ -129,27 +96,26 @@ const ServerList = ({ servers = List(), handleCreateClick }) => {
                                     placement="right"
                                     arrow
                                 >
-                                    <Avatar
-                                        data-active={String(active === i)}
+                                    <HoverSquare.Avatar
+                                        data-active={active === i}
                                         alt={el.get("name")[0]}
                                         src={el.get("icon")}
                                         defaultChecked
-                                        classes={avatarClasses}
                                     >
                                         {!el.get("icon") && el.get("name")[0]}
-                                    </Avatar>
+                                    </HoverSquare.Avatar>
                                 </Tooltip>
                             </IconButton>
                         </ListItemAvatar>
                     );
                 })}
                 <ListItemAvatar className={classes.avatarContainer}>
-                    <IconButton
+                    <HoverSquare.IconButton
                         style={{ padding: 0 }}
                         onClick={handleCreateClick}
                     >
                         <Add style={{ width: "50px", height: "50px" }} />
-                    </IconButton>
+                    </HoverSquare.IconButton>
                 </ListItemAvatar>
             </div>
         </div>

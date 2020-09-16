@@ -5,9 +5,10 @@
     "main": "server/app.js",
     "scripts": {
         "postinstall": "cd client && npm i && cd ../server && npm i",
-        "start": "cd server && npm run heroku-start",
+        "start": "cd server && npm run start",
         "build": "cd client && npm run build && move ./build ../server/build",
         "heroku-postbuild": "cd client && npm run build && mv ./build ../server/build",
+        "heroku-start": "cd server && npm run heroku-start",
         "server": "cd server && npm start",
         "client": "cd client && npm start",
         "lint": "eslint ."

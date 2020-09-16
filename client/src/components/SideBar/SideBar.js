@@ -25,8 +25,9 @@ const styles = makeStyles((theme) => ({
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
         borderRadius: 0,
+        backgroundColor: theme.palette.background.default,
+        height: "100%",
     },
     searchBar: {
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",

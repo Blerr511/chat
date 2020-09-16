@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             width: "99%",
-            backgroundColor: theme.palette.background.paper,
         },
         inline: {
             display: "inline",

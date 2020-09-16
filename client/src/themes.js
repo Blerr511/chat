@@ -3,8 +3,8 @@ import { grey } from "@material-ui/core/colors";
 
 export const light = createMuiTheme({
     palette: {
-        secondary:{
-            main:'#7289da'
+        secondary: {
+            main: "#7289da",
         },
         tonalOffset: 0.2,
     },
@@ -15,6 +15,7 @@ export const dark = createMuiTheme({
         background: {
             paper: "#35393F",
             default: "#2F3136",
+            dark: "#202225",
         },
         neutral: {
             main: "#5c6ac4",
