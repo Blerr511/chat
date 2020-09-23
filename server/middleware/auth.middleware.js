@@ -1,6 +1,5 @@
 const { verify } = require("jsonwebtoken");
 const { jwtSecret } = require("../config");
-const catchHelper = require("../helpers/catch.helper");
 /**
  * @param {import("express").Request} req
  * @param {import("express").Response} res

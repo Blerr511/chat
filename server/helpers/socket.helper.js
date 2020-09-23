@@ -9,7 +9,9 @@ const socketMap = {};
  */
 const getConnectedSocket = (socketId) => io.sockets.connected[socketId];
 
-const addSocketUser = (userId, socketId) => (socketMap[userId] = socketId);
+const addSocketUser = (userId, socketId) => {
+    socketMap[userId] = socketId;
+};
 
 const deleteSocketUser = (userId) => delete socketMap[userId];
 
@@ -17,7 +19,9 @@ const deleteSocketUser = (userId) => delete socketMap[userId];
  * @param {String} userId
  * @returns {import("socket.io").Socket}
  */
-const getSocketByUserId = (userId) => getConnectedSocket(socketMap[userId]);
+const getSocketByUserId = (userId) => {
+    return getConnectedSocket(socketMap[userId]);
+};
 
 module.exports = {
     getConnectedSocket,
