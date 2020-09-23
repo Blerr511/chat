@@ -29,7 +29,33 @@ const create = async (name, serverIcon) => {
     ).then(handleResponse);
 };
 
+const createNewRoom = async (serverId, room) => {
+    const body = new URLSearchParams();
+    for (const k in room) {
+        if (room.hasOwnProperty(k)) {
+            const v = room[k];
+            body.append(k, v);
+        }
+    }
+    const requestInit = {
+        method: "POST",
+        headers: {
+            ...authHeader(),
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body,
+    };
+
+    return await fetch(
+        process.env.REACT_APP_API_CREATE_SERVER + `/${serverId}/newRoom`,
+        requestInit
+    )
+        .then(handleResponse)
+        .then((data) => data);
+};
+
 export const serverServices = {
     get,
     create,
+    createNewRoom,
 };
