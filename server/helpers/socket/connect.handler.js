@@ -12,6 +12,7 @@ const {
 const User = require("../../mongodb/schemas/user.schema");
 const { Room } = require("../../mongodb/schemas/room.schema");
 const { addSocketUser } = require("../socket.helper");
+const actionHandler = require("./action.handler");
 /**
  * Initiating socket io
  * @param {SocketIO.Server} io
@@ -44,9 +45,9 @@ module.exports = (io) => {
                     socket.connectedAt = new Date();
                     socket.emit(d_SOCKET_AUTHENTICATED);
                     if (process.env.NODE_ENV === "development")
-                    console.info(
-                        `SOCKET ${socket.id} ` + "AUTHENTICATED".green
-                    );
+                        console.info(
+                            `SOCKET ${socket.id} ` + "AUTHENTICATED".green
+                        );
                     User.findById(socket.user?._id, (err, doc) => {
                         if (err) return false;
                         doc.online = true;
@@ -66,7 +67,7 @@ module.exports = (io) => {
 
         socket.on("disconnect", () => disconnectHandler(socket));
         socket.on(d_SOCKET_MESSAGE, (data) => messageHandler(socket, io, data));
-
+        socket.on("action", actionHandler(socket, io));
         socket.on(d_SOCKET_AUTH, auth);
     });
 };
