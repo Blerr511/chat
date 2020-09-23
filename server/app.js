@@ -1,5 +1,4 @@
 require("colors");
-require("dotenv").config();
 const config = require("./config");
 const express = require("express");
 const { server, io, app } = require("./helpers/createServer.helper");
@@ -17,6 +16,7 @@ const connectHandler = require("./helpers/socket/connect.handler");
 const roomApi = require("./routes/room.route");
 const usersRoute = require("./routes/users.route");
 const serverRoute = require("./routes/server.route");
+const permissionRoute = require("./routes/permission.route");
 const { configureAwsS3 } = require("./helpers/multer.helper");
 // ----------------------------------------------s------------ //
 app.use(cors({ origin: config.corsOrigin }));
@@ -31,6 +31,8 @@ app.use("/api/login", loginApi, responseMiddleware);
 app.use("/api/room", roomApi, responseMiddleware);
 app.use("/api/users", usersRoute, responseMiddleware);
 app.use("/api/server", serverRoute, responseMiddleware);
+app.use("/api/permissions", permissionRoute, responseMiddleware);
+
 app.get("/*", (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
 });
