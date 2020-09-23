@@ -7,8 +7,11 @@ import {
     Paper,
     Typography,
 } from "@material-ui/core";
-import { ChevronRight, ExpandMore, PersonAdd } from "@material-ui/icons";
-import React, { useState } from "react";
+import { Add, ChevronRight, ExpandMore, PersonAdd } from "@material-ui/icons";
+import React, { useEffect, useState } from "react";
+import usePermissions from "../../hooks/usePermissions.hook";
+import DialogCreateRoom from "../Dialog/DialogCreateRoom";
+import { Styled } from "../StyledComponents/Styled.group";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -45,71 +48,155 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "column",
     },
     roomHeaderTitle: {
-        background: "none!important",
-        color: theme.palette.grey[300],
-        justifyContent:'flex-start'
+        justifyContent: "flex-start",
+        width: "100%",
+        fontSize: theme.typography.pxToRem(12),
+    },
+    roomTitle: {
+        justifyContent: "flex-start",
+        width: "100%",
+        fontSize: theme.typography.pxToRem(12),
+        "&[data-active=true]": {
+            backgroundColor: theme.palette.background.selected,
+        },
+    },
+    headerContainer: {
+        display: "flex",
+        justifyContent: "flex-between",
     },
 }));
 
-const ServerSideBar = ({ name, rooms }) => {
+const ServerSideBar = ({
+    server,
+    myUser,
+    error,
+    message,
+    loading,
+    clearServerMessages,
+    createNewRoom,
+    setSelectedTextChannel,
+}) => {
+    const name = server.get("name"),
+        rooms = server.get("rooms"),
+        members = server.get("members"),
+        id = server.get("_id"),
+        selectedTextChannel = server.get("activeRoom");
     const classes = useStyles();
-    const [textChannelExpanded, setTextChannelExpanded] = useState(false);
+    const [textChannelExpanded, setTextChannelExpanded] = useState(true);
+    const [createRoomDialog, setCreateRoomDialog] = useState(false);
     const handleTextExpandClick = () => {
         setTextChannelExpanded((v) => !v);
     };
+    const handleCloseDialog = () => setCreateRoomDialog(false);
+    const handleOpenDialog = () => setCreateRoomDialog(true);
+    const [, myMember] = members.findEntry((v) => v._id === myUser);
+    const checkPermissions = usePermissions(myMember.getIn(["role", "name"]));
+    const handleSubmitNewRoom = ({ name, type }) => {
+        if (type === "text") createNewRoom(id, { name });
+        handleCloseDialog();
+    };
+    useEffect(() => {
+        setSelectedTextChannel({ serverId: id, index: 0 });
+    }, [id, setSelectedTextChannel]);
     return (
-        <Paper className={classes.paper}>
-            <Paper className={classes.header} elevation={1} square>
-                <Typography
-                    component="span"
-                    variant="body2"
-                    className={classes.title}
-                    color="textPrimary"
-                >
-                    {name}
-                </Typography>
+        <>
+            <DialogCreateRoom
+                error={error}
+                handleOnClose={handleCloseDialog}
+                handleSubmit={handleSubmitNewRoom}
+                loading={loading}
+                message={message}
+                open={createRoomDialog}
+                onMessageClose={clearServerMessages}
+            />
+            <Paper className={classes.paper}>
+                <Paper className={classes.header} elevation={1} square>
+                    <Typography
+                        component="span"
+                        variant="body2"
+                        className={classes.title}
+                        color="textPrimary"
+                    >
+                        {name}
+                    </Typography>
+                </Paper>
+                <div className={classes.inviteBlock}>
+                    <PersonAdd
+                        color="action"
+                        style={{ width: 50, height: 50 }}
+                    />
+                    <Typography
+                        style={{
+                            margin: "30px 15% 30px 15%",
+                        }}
+                    >
+                        {"Invite more peoples to your server and enjoy"}
+                    </Typography>
+                    <Button color="primary" variant="contained">
+                        Invite people
+                    </Button>
+                </div>
+                <Divider />
+                <div className={classes.roomContainer}>
+                    <div className={classes.headerContainer}>
+                        <Styled.TextButtonInverted
+                            variant="text"
+                            onClick={handleTextExpandClick}
+                            disableElevation
+                            disableRipple
+                            disableFocusRipple
+                            className={classes.roomHeaderTitle}
+                        >
+                            {textChannelExpanded ? (
+                                <ExpandMore />
+                            ) : (
+                                <ChevronRight />
+                            )}
+                            Text channels
+                        </Styled.TextButtonInverted>
+                        {checkPermissions("createRoom") && (
+                            <Styled.TextButtonInverted
+                                variant="text"
+                                onClick={handleOpenDialog}
+                                disableElevation
+                                disableRipple
+                                disableFocusRipple
+                            >
+                                <Add />
+                            </Styled.TextButtonInverted>
+                        )}
+                    </div>
+
+                    <Collapse in={textChannelExpanded}>
+                        {rooms &&
+                            rooms.map((el, i) => {
+                                return (
+                                    <ListItem
+                                        key={el.get("_id")}
+                                        style={{ width: "100%" }}
+                                    >
+                                        <Button
+                                            variant="text"
+                                            className={classes.roomTitle}
+                                            data-active={
+                                                selectedTextChannel === i
+                                            }
+                                            onClick={() =>
+                                                setSelectedTextChannel({
+                                                    serverId: id,
+                                                    index: i,
+                                                })
+                                            }
+                                        >
+                                            {el.get("name")}
+                                        </Button>
+                                    </ListItem>
+                                );
+                            })}
+                    </Collapse>
+                </div>
             </Paper>
-            <div className={classes.inviteBlock}>
-                <PersonAdd color="action" style={{ width: 50, height: 50 }} />
-                <Typography
-                    style={{
-                        margin: "30px 15% 30px 15%",
-                    }}
-                >
-                    {"Invite more peoples to your server and enjoy"}
-                </Typography>
-                <Button color="primary" variant="contained">
-                    Invite people
-                </Button>
-            </div>
-            <Divider />
-            <div className={classes.roomContainer}>
-                <Button
-                    variant="text"
-                    onClick={handleTextExpandClick}
-                    disableElevation
-                    disableRipple
-                    disableFocusRipple
-                    className={classes.roomHeaderTitle}
-                >
-                    {textChannelExpanded ? <ExpandMore /> : <ChevronRight />}
-                    Text channels
-                </Button>
-                <Collapse in={textChannelExpanded}>
-                    {rooms &&
-                        rooms.map((el) => {
-                            console.log(el);
-                            return (
-                                <ListItem key={el.get("_id")}>
-                                    <Button variant="text">
-                                        {el.get("name")}
-                                    </Button>
-                                </ListItem>
-                            );
-                        })}
-                </Collapse>
-            </div>
-        </Paper>
+        </>
     );
 };
 

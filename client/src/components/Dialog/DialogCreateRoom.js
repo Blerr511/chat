@@ -10,12 +10,13 @@ import {
     makeStyles,
     TextField,
     Typography,
+    Checkbox,
 } from "@material-ui/core";
 import { CloseOutlined, PhotoCameraOutlined } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React, { useEffect, useRef, useState } from "react";
 
-const DialogCreateServer = ({
+const DialogCreateRoom = ({
     open,
     handleOnClose,
     handleSubmit,
@@ -25,9 +26,10 @@ const DialogCreateServer = ({
     onMessageClose,
 }) => {
     const classes = styles();
-    const credentials = useRef({ file: null, name: "" });
+    const credentials = useRef({ name: "" });
     const [error3, setError3] = useState("");
     const [message3, setMessage3] = useState("");
+    const [channelType, setChannelType] = useState("text");
     useEffect(() => {
         setError3(Boolean(error));
     }, [error]);
@@ -46,12 +48,13 @@ const DialogCreateServer = ({
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    handleSubmit(credentials.current);
+                    handleSubmit({ ...credentials.current, type: channelType });
                 }}
             >
                 <DialogTitle>
                     <Typography style={{ textAlign: "center" }}>
-                        Create server
+                        Create {channelType === "text" ? "text" : "audio"}{" "}
+                        channel
                     </Typography>
                 </DialogTitle>
                 <DialogContent className={classes.dialogContent}>
@@ -79,27 +82,44 @@ const DialogCreateServer = ({
                             {error || message}
                         </Alert>
                     </Collapse>
-                    <input
-                        accept="image/*"
-                        className={classes.input}
-                        style={{ display: "none" }}
-                        id="raised-button-file"
-                        type="file"
-                        onChange={(e) => {
-                            credentials.current.file = e.target.files[0];
-                        }}
-                    />
-                    <label htmlFor="raised-button-file">
-                        <PhotoCameraOutlined
+                    <div className={classes.typeButtonsContainer}>
+                        <Button
+                            variant={
+                                channelType === "text" ? "contained" : "text"
+                            }
+                            onClick={() => setChannelType("text")}
+                            color="primary"
                             style={{
-                                width: "50px",
-                                height: "50px",
+                                justifyContent: "flex-start",
+                                paddingLeft: 0,
                             }}
-                        />
-                        <Typography style={{ textAlign: "center" }}>
-                            Upload
-                        </Typography>
-                    </label>
+                        >
+                            <Checkbox
+                                checked={channelType === "text"}
+                                style={{ color: "white!important" }}
+                            />
+                            Text Channel
+                        </Button>
+                        <Button
+                            variant={
+                                channelType === "audio" ? "contained" : "text"
+                            }
+                            onClick={() => setChannelType("audio")}
+                            color="primary"
+                            style={{
+                                justifyContent: "flex-start",
+                                paddingLeft: 0,
+                            }}
+                            disabled
+                        >
+                            <Checkbox
+                                checked={channelType === "audio"}
+                                style={{ color: "white!important" }}
+                                disabled
+                            />
+                            Audio Channel
+                        </Button>
+                    </div>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -168,6 +188,10 @@ const styles = makeStyles((theme) => ({
         marginTop: -12,
         marginLeft: -12,
     },
+    typeButtonsContainer: {
+        width: "100%",
+        display: "grid",
+    },
 }));
 
-export default DialogCreateServer;
+export default DialogCreateRoom;

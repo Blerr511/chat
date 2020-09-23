@@ -16,6 +16,7 @@ export const dark = createMuiTheme({
             paper: "#35393F",
             default: "#2F3136",
             dark: "#202225",
+            selected: "rgba(79,84,92,0.32)"
         },
         neutral: {
             main: "#5c6ac4",

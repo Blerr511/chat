@@ -8,7 +8,7 @@ import UserScreen from "./containers/UserScreen/UserScreen";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import SignUp from "./components/Auth/SignUp";
 import themes from "./themes";
-
+window.jsonschema = require('json-schema')
 export const ThemeController = createContext();
 
 const App = ({ auth, login, signUp, clear }) => {
@@ -17,6 +17,7 @@ const App = ({ auth, login, signUp, clear }) => {
     const error = auth.get("error");
     const loading = auth.get("loading");
     const message = auth.get("message");
+    const socketConnected = auth.get("socketConnected");
     useEffect(() => {
         login();
     }, [login]);
@@ -29,7 +30,7 @@ const App = ({ auth, login, signUp, clear }) => {
                             path="/"
                             exact
                             render={({ location }) => {
-                                return loggedIn ? (
+                                return loggedIn && socketConnected ? (
                                     <UserScreen />
                                 ) : loggedIn === false ? (
                                     <Redirect

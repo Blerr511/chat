@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { makeStyles, Paper } from "@material-ui/core";
 import SideBar from "../../components/SideBar/SideBar";
 import { _getMyRooms } from "../../actions/room.action";
@@ -7,12 +7,19 @@ import { searchUsers, searchUsersFakeLoading } from "../../actions/user.action";
 import MessageBar from "./MessageBar";
 import {
     clearServerMessages,
+    createNewServerRoom,
     createServer,
     getServers,
+    serverSetActiveChannel,
 } from "../../actions/server.action";
 import ServerList from "../../components/SideBar/ServerList";
 import DialogCreateServer from "../../components/Dialog/DialogCreateServer";
 import ServerSideBar from "../../components/ServerSideBar/ServerSideBar";
+import { _getRoles } from "../../actions/permissions.action";
+import {
+    sendSocketAction,
+    SOCKET_ACTION_TYPES,
+} from "../../helpers/socketIo.middleware";
 const styles = makeStyles((theme) => ({
     container: {
         flex: 1,
@@ -38,6 +45,7 @@ const styles = makeStyles((theme) => ({
  * @param {Array.<User>} props.users
  */
 const UserScreen = ({
+    user,
     rooms,
     users,
     server,
@@ -47,7 +55,14 @@ const UserScreen = ({
     getServers,
     createServer,
     clearServerMessages,
+    getRoles,
+    createNewServerRoom,
+    serverSetActiveChannel,
+    sendSocketAction,
 }) => {
+    const classes = styles();
+
+    const [activeServer, setActiveServer] = useState(null);
     const loading1 = rooms.get("loading");
     const loading2 = users.get("loading");
     const loading3 = server.get("loading");
@@ -56,12 +71,13 @@ const UserScreen = ({
     const myRooms = rooms.get("rooms");
     const activeRoom = rooms.get("currentActive");
     const servers = server.get("list");
-    const classes = styles();
     const [open, setOpen] = useState(false);
+
     useEffect(() => {
         getMyRooms();
         getServers();
-    }, [getMyRooms, getServers]);
+        getRoles();
+    }, [getMyRooms, getServers, getRoles]);
 
     const handleCreateClick = () => {
         setOpen(true);
@@ -73,7 +89,20 @@ const UserScreen = ({
     const handleSubmit = (credentials) => {
         createServer(credentials.name, credentials.file);
     };
-    const [activeServer, setActiveServer] = useState(null);
+    const handleSendMessage = useCallback(
+        ({ roomId, message }) => {
+            const serverId = servers.getIn([activeServer, "_id"]);
+            sendSocketAction({
+                type: SOCKET_ACTION_TYPES.SEND_MESSAGE,
+                payload: {
+                    serverId,
+                    roomId,
+                    data: message,
+                },
+            });
+        },
+        [sendSocketAction, servers, activeServer]
+    );
     return (
         <section className={classes.container}>
             <DialogCreateServer
@@ -112,18 +141,36 @@ const UserScreen = ({
                     )}
                     {typeof activeServer === "number" && (
                         <ServerSideBar
-                            name={servers.getIn([activeServer, "name"])}
-                            rooms={servers.getIn([activeServer, "rooms"])}
+                            myUser={user}
+                            server={servers.get(activeServer)}
+                            error={servers.get("error")}
+                            message={servers.get("message")}
+                            loading={servers.get("loading")}
+                            clearServerMessages={clearServerMessages}
+                            createNewRoom={createNewServerRoom}
+                            setSelectedTextChannel={serverSetActiveChannel}
                         />
                     )}
                 </div>
-                <MessageBar />
+                <div style={{ flex: 4 }}>
+                    {typeof activeServer === "number" && (
+                        <MessageBar
+                            handleSend={handleSendMessage}
+                            room={servers.getIn([
+                                activeServer,
+                                "rooms",
+                                servers.getIn([activeServer, "activeRoom"]),
+                            ])}
+                        />
+                    )}
+                </div>
             </Paper>
         </section>
     );
 };
 
 const mapStateToProps = (state) => ({
+    user: state.auth.user,
     rooms: state.rooms,
     users: state.users,
     server: state.server,
@@ -136,6 +183,10 @@ const mapDispatchToProps = {
     getServers,
     createServer,
     clearServerMessages,
+    getRoles: _getRoles,
+    createNewServerRoom,
+    serverSetActiveChannel,
+    sendSocketAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserScreen);

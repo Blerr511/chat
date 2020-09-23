@@ -44,3 +44,31 @@ export const createServer = (name, serverIcon) => (dispatch) => {
         (error) => dispatch(failure(error))
     );
 };
+
+export const CREATE_SERVER_ROOM_REQUEST = "CREATE_SERVER_ROOM_REQUEST";
+export const CREATE_SERVER_ROOM_SUCCESS = "CREATE_SERVER_ROOM_SUCCESS";
+export const CREATE_SERVER_ROOM_FAILURE = "CREATE_SERVER_ROOM_FAILURE";
+
+export const createNewServerRoom = (serverId, room) => (dispatch) => {
+    const request = () => {
+        return { type: CREATE_SERVER_ROOM_REQUEST };
+    };
+    const success = (payload) => {
+        return { type: CREATE_SERVER_ROOM_SUCCESS, payload };
+    };
+    const failure = (error) => {
+        return { type: CREATE_SERVER_ROOM_FAILURE, payload: error };
+    };
+    dispatch(request());
+    serverServices.createNewRoom(serverId, room).then(
+        (data) => dispatch(success(data)),
+        (error) => dispatch(failure(error))
+    );
+};
+
+export const SERVER_SET_ACTIVE_CHANNEL = "SERVER_SET_ACTIVE_CHANNEL";
+
+export const serverSetActiveChannel = (payload) => ({
+    type: SERVER_SET_ACTIVE_CHANNEL,
+    payload,
+});

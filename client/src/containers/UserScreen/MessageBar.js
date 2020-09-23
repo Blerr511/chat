@@ -13,9 +13,9 @@ import { Send } from "@material-ui/icons";
 import { connect } from "react-redux";
 import { Map, List } from "immutable";
 import { sendSocketMessage } from "../../helpers/socketIo.middleware";
-const useStyles = makeStyles((styles) => ({
+const useStyles = makeStyles((theme) => ({
     paper: {
-        backgroundColor: styles.palette.background.paper,
+        backgroundColor: theme.palette.background.paper,
         flex: 4,
         display: "flex",
         flexDirection: "column",
@@ -23,40 +23,53 @@ const useStyles = makeStyles((styles) => ({
         justifyContent: "space-between",
     },
     headerContainer: {
-        backgroundColor: styles.palette.background.paper,
-        padding: "18px",
         display: "flex",
-        borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: theme.spacing(2),
+        paddingLeft: theme.spacing(3),
     },
     title: {
-        fontSize: "20px",
+        fontSize: theme.typography.pxToRem(24),
     },
     MessageContainer: {
-        backgroundColor: styles.palette.background.paper,
-        flex: 21,
+        height: "100%",
+        marginTop: "50px",
         overflow: "hidden",
         position: "relative",
     },
     messageBox: {
-        backgroundColor: styles.palette.background.paper,
+        backgroundColor: theme.palette.background.paper,
         overflow: "auto",
         position: "absolute",
-        top: styles.spacing(2),
-        right: styles.spacing(2),
-        bottom: styles.spacing(2),
-        left: styles.spacing(2),
+        top: theme.spacing(2),
+        right: theme.spacing(2),
+        bottom: theme.spacing(2),
+        left: theme.spacing(2),
     },
     listItemText: {
         fontSize: "16px",
+        opacity: 0.9,
+    },
+    messageDate: {
+        fontSize: theme.typography.pxToRem(10),
+        color: theme.palette.grey[600],
+        marginLeft: theme.spacing(1),
     },
     listItemSenderText: {
-        fontSize: "14px",
+        fontSize: theme.typography.pxToRem(14),
     },
     messageItemPaper: {
         padding: "10px",
     },
+    messageItemContainer: {
+        display: "flex",
+        flexDirection: "row",
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(3),
+    },
     senderBox: {
-        backgroundColor: styles.palette.background.default,
+        backgroundColor: theme.palette.background.default,
         padding: "20px",
         marginTop: "20px",
         display: "flex",
@@ -65,72 +78,69 @@ const useStyles = makeStyles((styles) => ({
         justifyContent: "center",
     },
     senderPaper: {
-        backgroundColor: styles.palette.grey[100],
+        backgroundColor: theme.palette.grey[100],
     },
 }));
 
-const Header = ({ user }) => {
+const Header = ({ name }) => {
     const classes = useStyles();
     return (
-        <AppBar
-            className={classes.headerContainer}
-            position="static"
-            color="default"
-            elevation={0}
-        >
+        <Paper className={classes.headerContainer} elevation={1} square>
             <Typography
                 component="span"
                 variant="body2"
                 className={classes.title}
                 color="textPrimary"
             >
-                {user?.map((el) => el.get("username")).join(" , ")}
+                {name}
             </Typography>
-        </AppBar>
+        </Paper>
     );
 };
 
-const MessageItem = ({ avatar, text, sender, itsMe }) => {
+const MessageItem = ({ avatar, text, sender, date }) => {
     const classes = useStyles();
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: itsMe ? "row-reverse" : "row",
-                alignItems: "flex-end",
-                margin: "0 0 20px 0",
-            }}
-        >
+        <div className={classes.messageItemContainer}>
             <Avatar
                 style={{
                     marginRight: "20px",
                     marginLeft: "20px",
                 }}
-                src={"/empty/"}
-                alt={sender.get("username")}
+                src={avatar}
+                alt={sender}
             ></Avatar>
             <div>
-                <Typography
-                    color="textSecondary"
-                    className={classes.listItemSenderText}
-                    style={{ textAlign: itsMe ? "right" : "left" }}
-                >
-                    {sender.get("username")}
-                </Typography>
-                <Paper className={classes.messageItemPaper}>
+                <span style={{ display: "flex" }}>
+                    <Typography
+                        color="textPrimary"
+                        className={classes.listItemSenderText}
+                        style={{ textAlign: "left" }}
+                    >
+                        {sender}
+                    </Typography>
+                    <Typography
+                        color="textPrimary"
+                        className={classes.messageDate}
+                        style={{ textAlign: "left" }}
+                    >
+                        {date}
+                    </Typography>
+                </span>
+                <div>
                     <Typography
                         className={classes.listItemText}
                         color="textPrimary"
                     >
                         {text}
                     </Typography>
-                </Paper>
+                </div>
             </div>
         </div>
     );
 };
 
-const MessageContainer = ({ data, myUser, getSender }) => {
+const MessageContainer = ({ data, myUser = "Blerr", getSender }) => {
     const classes = useStyles();
     const $paper = useRef();
     useEffect(() => {
@@ -138,19 +148,19 @@ const MessageContainer = ({ data, myUser, getSender }) => {
     }, [data.size]);
     return (
         <Box className={classes.MessageContainer}>
-            <Paper className={classes.messageBox}>
+            <div className={classes.messageBox}>
                 {data.map((el) => {
                     return (
                         <MessageItem
                             key={el.get("_id")}
-                            text={el?.get("data")}
-                            sender={getSender(el.get("sender"))}
-                            itsMe={myUser === el.get("sender")}
+                            text={el.get("data")}
+                            sender={"hello "}
+                            itsMe={false}
                         />
                     );
                 })}
-                <div ref={$paper}></div>
-            </Paper>
+            </div>
+            <div ref={$paper}></div>
         </Box>
     );
 };
@@ -192,46 +202,24 @@ const MessageSender = ({ onSend }) => {
     );
 };
 
-const MessageBar = ({ room, myUserId, sendMessage }) => {
+const MessageBar = ({ room, handleSend }) => {
     const classes = useStyles();
-    const getSender = (senderId) => {
-        return room.getIn([
-            "members",
-            room.get("members").findIndex((el) => el.get("_id") === senderId),
-        ]);
+    if (!room) return null;
+
+    const name = room.get("name");
+    const data = room.get("messages");
+    const roomId = room.get("_id");
+    const onSend = (message) => {
+        handleSend({ roomId, message });
     };
 
-    const handleSend = (message) => {
-        sendMessage({ room: room.get("_id"), message });
-    };
     return (
         <Paper className={classes.paper}>
-            <Header user={room.get("members")} />
-            <MessageContainer
-                data={room.get("messages")}
-                myUser={myUserId}
-                getSender={getSender}
-            />
-            <MessageSender onSend={handleSend} />
+            {<Header name={name} />}
+            {<MessageContainer data={data} />}
+            <MessageSender onSend={onSend} />
         </Paper>
     );
 };
 
-const mapStateToProps = (state) => {
-    const room =
-        state.rooms.get("rooms").size > 0
-            ? state.rooms.getIn(["rooms", state.rooms.get("currentActive")])
-            : Map({ messages: List() });
-    const myUserId = state.auth.getIn(["user", "_id"]);
-
-    return {
-        room,
-        myUserId,
-    };
-};
-
-const mapDispatchToProps = {
-    sendMessage: sendSocketMessage,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);
+export default MessageBar;

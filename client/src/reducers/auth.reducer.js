@@ -8,12 +8,14 @@ import {
     SIGNUP_FAILURE,
     CLEAR_AUTH_MESSAGES,
 } from "../actions/auth.action";
+import { SOCKET_CONNECTED } from "../helpers/socketIo.middleware";
 const initialState = Map({
     loggedIn: null,
     user: null,
     loading: false,
     error: null,
     message: null,
+    socketConnected: false,
 });
 
 const auth = (state = initialState, { type, payload }) => {
@@ -38,6 +40,8 @@ const auth = (state = initialState, { type, payload }) => {
                 mutable.set("loggedIn", false);
                 return mutable;
             });
+        case SOCKET_CONNECTED:
+            return state.set("socketConnected", true);
         case SIGNUP_REQUEST:
             return state
                 .set("loading", true)
