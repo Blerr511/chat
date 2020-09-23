@@ -1,6 +1,7 @@
 const { mongoString } = require("../config");
 // ---------------------------------------------------------- //
 const mongoose = require("mongoose");
+const { Role } = require("./schemas/role.schema");
 /**
  * Connecting to mongoDb
  * @return {Promise<void>}
@@ -14,6 +15,7 @@ module.exports = () => {
             useFindAndModify: false,
         })
         .then(() => {
+            Role.initRoles();
             console.log(
                 "Connected to mongodb " +
                     (process.env.MONGO_STRING || mongoString).blue

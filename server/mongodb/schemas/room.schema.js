@@ -1,27 +1,23 @@
 const { Schema, model } = require("mongoose");
 const { MessageSchema, MessageModel } = require("./message.schema");
 const User = require("./user.schema");
-
+const { MemberSchema, Member } = require("./member.schema");
+/**
+ * @class RoomSchema
+ */
 const RoomSchema = new Schema(
     {
         name: {
             type: String,
-            default: function () {
-                return this.members
-                    .map((el) => el.firstName + el.lastName)
-                    .join(" , ");
-            },
+            default: "Room",
         },
         messages: [{ type: MessageSchema }],
         members: [
             {
-                type: Schema.Types.ObjectId,
-                ref: "user",
+                type: MemberSchema,
                 index: { unique: true, dropDups: true },
             },
         ],
-
-        admins: [{ type: Schema.Types.ObjectId, ref: "user" }],
     },
     {
         timestamps: false,
@@ -36,37 +32,36 @@ RoomSchema.index({ members: 1 }, { unique: true, dropDups: true });
  */
 RoomSchema.statics.getRoom = async function (members, creator) {
     const users = await User.findManyByUsernames(members);
-    const admin = await User.findOne(creator).select("+socketId");
     if (users.length !== members.length) throw new Error("Users not found");
     const checkExistRoom = await this.findOne({
-        members: users.concat(admin),
+        "members.user": { $all: users.concat(creator._id) },
     })
-        .populate("members admins")
+        .populate("members.user members.role")
         .lean();
-    if (checkExistRoom) return Object.assign(checkExistRoom, { isNew: false });
+    if (checkExistRoom) return checkExistRoom;
+    const _members = users.map((user) => new Member({ user: user._id }));
+    const _admin = new Member({ user: creator._id });
+    await _admin.setRole("admin");
     const room = new this({
         messages: [],
-        admins: [admin],
-        members: [...users, admin],
+        members: [..._members, _admin],
     });
     await room.save();
-    return Object.assign(room, { isNew: true });
+    return await Room.populate(room, { path: "members.user members.role" });
 };
 
 RoomSchema.statics.getRoomsOfUser = async function (user) {
-    // const dbUser = await User.findOne(user);
     if (!user) throw new Error("User not found");
 
-    const rooms = await this.find({ members: user })
-        .populate("members admins")
+    const rooms = await this.find({ "members.user": user })
+        .populate("members.user members.role")
         .lean();
     if (!rooms) throw new Error("Rooms not found");
     return rooms;
 };
 
 RoomSchema.methods.message = async function (userId, data) {
-    const sender = await User.findById(userId);
-    const message = new MessageModel({ sender, data });
+    const message = new MessageModel({ sender: userId, data });
     this.messages.push(message);
     await message.save();
     this.save();

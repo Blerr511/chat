@@ -3,38 +3,21 @@ const {
     userErrors,
     roomErrors,
 } = require("../../messages/error/mongoose.error");
+const { MemberSchema } = require("./member.schema");
+const { MessageModel } = require("./message.schema");
 const { RoomSchema } = require("./room.schema");
 
 const ServerSchema = new Schema({
     name: { type: String, required: [true, "Server name is required"] },
     members: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "user",
-            unique: true,
+            type: MemberSchema,
+            index: { unique: true, dropDups: true },
         },
     ],
-    admins: [{ type: Schema.Types.ObjectId, ref: "user" }],
     rooms: [{ type: RoomSchema }],
     icon: { type: String, default: null },
 });
-
-ServerSchema.statics.getMyServers = async function (user) {
-    if (!user) throw new Error(userErrors.user_not_found);
-    const server = await this.find({
-        $or: [{ members: user }, { admins: user }],
-    })
-        .populate("members admins rooms")
-        .lean();
-    if (!server) throw new Error(roomErrors.server_not_exists);
-    return server;
-};
-
-ServerSchema.methods.addRoom = async function (room) {
-    this.rooms.push(room);
-    await this.save();
-    return this;
-};
 
 ServerSchema.methods.addMember = async function (_server, roomId, userId) {
     const result = await this.updateOne(_server, {
@@ -42,6 +25,27 @@ ServerSchema.methods.addMember = async function (_server, roomId, userId) {
     });
     if (!result.ok) throw new Error("Some error happens");
     return roomId;
+};
+
+ServerSchema.methods.message = function (roomId, data) {
+    let message = null;
+    for (let i = 0; i < this.rooms.length; i++) {
+        const room = this.rooms[i];
+        if (room._id.toString() === roomId) {
+            message = new MessageModel(data);
+            room.messages.push(new MessageModel(data));
+        }
+    }
+    return message;
+};
+
+ServerSchema.statics.getMyServers = async function (user) {
+    if (!user) throw new Error(userErrors.user_not_found);
+    const server = await this.find({ "members.user": user })
+        .populate("members.user members.role rooms")
+        .lean();
+    if (!server) throw new Error(roomErrors.server_not_exists);
+    return server;
 };
 
 ServerSchema.statics.joinRoom = async function (_server, roomId, userId) {
