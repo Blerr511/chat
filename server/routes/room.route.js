@@ -16,32 +16,24 @@ const handleGetRooms = async (req, res, next) => {
     try {
         const { members } = req.query;
         const { user } = req;
-        let isNew = false;
+        let room = null;
         if (members) {
-            const room = await Room.getRoom(members.split(","), user);
-            isNew = room.isNew;
-            if (isNew) {
-                room.members.map((user) => {
-                    if (user.socketId) {
-                        io.sockets.connected[user.socketId].join(room._id);
-                        io.sockets.connected[user.socketId].emit(
-                            d_SOCKET_NEW_ROOM
-                        );
-                    }
-                });
-            }
-        }
-
-        const room = await Room.getRoomsOfUser(user);
+            room = await Room.getRoom(members.split(","), user);
+            room.members.map((user) => {
+                if (user.socketId) {
+                    io.sockets.connected[user.socketId].join(room._id);
+                    io.sockets.connected[user.socketId].emit(d_SOCKET_NEW_ROOM);
+                }
+            });
+        } else room = await Room.getRoomsOfUser(user);
 
         req.response = {
             code: 200,
             status: "success",
-            message: isNew ? "Room success created" : null,
+            message: "Success",
             data: room,
         };
     } catch (error) {
-        console.error(error);
         catchHelper(req, error);
     }
 

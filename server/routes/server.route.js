@@ -5,6 +5,9 @@ const { getSocketByUserId } = require("../helpers/socket.helper");
 const { io } = require("../helpers/createServer.helper");
 const { d_SOCKET_NEW_MEMBER } = require("../constants/socketEvents.constant");
 const multerHelper = require("../helpers/multer.helper");
+const permissionMiddleware = require("../middleware/permission.middleware");
+const { Member } = require("../mongodb/schemas/member.schema");
+const { newRoomCreated } = require("../helpers/actions/newRoom.action");
 
 const router = require("express").Router();
 /**
@@ -15,7 +18,9 @@ const handleGetServers = async (req, res, next) => {
     try {
         const { user } = req;
         const servers = await Server.getMyServers(user);
-
+        servers.map((server) => {
+            getSocketByUserId(user._id)?.join(server._id);
+        });
         req.response = {
             code: 200,
             status: "success",
@@ -36,20 +41,27 @@ const handleCreateServer = async (req, res, next) => {
         const { name } = req.body;
         const { user } = req;
         const icon = req.file?.location;
+        const admin = new Member({ user: user._id });
+        await admin.setRole("admin");
+        const room = new Room({
+            name: "Main room",
+        });
         const server = new Server({
             name,
             icon,
-            admins: [user._id],
-            members: [],
-            rooms: [],
+            members: [admin],
+            rooms: [room],
         });
         await server.save();
-        
+        getSocketByUserId(user._id)?.join(server._id);
+        const data = await Server.populate(server, {
+            path: "members.user members.role",
+        });
         req.response = {
             code: 200,
             status: "success",
             message: "Server success created",
-            data: server,
+            data,
         };
     } catch (error) {
         catchHelper(req, error);
@@ -63,26 +75,34 @@ const handleCreateServer = async (req, res, next) => {
  */
 const handleAddNewRoomToServer = async (req, res, next) => {
     try {
-        const { serverId } = req.params;
-        const { name } = req.body;
+        const {
+            user,
+            body: { name },
+            params: { serverId },
+        } = req;
         const server = await Server.findById(serverId);
 
         if (!server) throw new Error("Server not found");
         if (!name) throw new Error("Room name is required");
         const room = new Room({
             name,
-            admins: [],
             members: [],
             messages: [],
         });
 
-        const _server = await server.addRoom(room);
-
+        server.rooms.push(room);
+        await server.save();
+        // const data = await Server.populate(server, {
+        //     path: "members.user members.role",
+        // });
+        getSocketByUserId(user._id).emit(
+            "action",
+            newRoomCreated({ serverId, data: room })
+        );
         req.response = {
             code: 200,
             status: "success",
             message: "Room success created",
-            data: _server,
         };
     } catch (error) {
         catchHelper(req, error);
@@ -140,7 +160,11 @@ const handleLeaveRoom = async (req, res, next) => {
 router.get("/", handleGetServers);
 router.post("/", multerHelper.upload.single("serverIcon"), handleCreateServer);
 
-router.post("/:serverId/newRoom", handleAddNewRoomToServer);
+router.post(
+    "/:serverId/newRoom",
+    permissionMiddleware("createRoom", (req) => req.params.serverId),
+    handleAddNewRoomToServer
+);
 router.post("/:serverId/:roomId/join", handleJoinToRoom);
 router.post("/:serverId/:roomId/leave", handleLeaveRoom);
 // ------------------------------- //
