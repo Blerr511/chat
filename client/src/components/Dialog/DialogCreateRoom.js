@@ -12,7 +12,7 @@ import {
     Typography,
     Checkbox,
 } from "@material-ui/core";
-import { CloseOutlined, PhotoCameraOutlined } from "@material-ui/icons";
+import { CloseOutlined } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React, { useEffect, useRef, useState } from "react";
 

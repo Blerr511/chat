@@ -10,6 +10,7 @@ import {
 import { Add, ChevronRight, ExpandMore, PersonAdd } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import usePermissions from "../../hooks/usePermissions.hook";
+import DialogCreateInvite from "../Dialog/DialogCreateInvite";
 import DialogCreateRoom from "../Dialog/DialogCreateRoom";
 import { Styled } from "../StyledComponents/Styled.group";
 
@@ -84,17 +85,24 @@ const ServerSideBar = ({
     const classes = useStyles();
     const [textChannelExpanded, setTextChannelExpanded] = useState(true);
     const [createRoomDialog, setCreateRoomDialog] = useState(false);
+    const [createInviteDialog, setCreateInviteDialog] = useState(false);
     const handleTextExpandClick = () => {
         setTextChannelExpanded((v) => !v);
     };
+
     const handleCloseDialog = () => setCreateRoomDialog(false);
     const handleOpenDialog = () => setCreateRoomDialog(true);
+    const handleCloseInviteDialog = () => setCreateInviteDialog(false);
+    const handleOpenInviteDialog = () => setCreateInviteDialog(true);
     const [, myMember] = members.findEntry((v) => v._id === myUser);
-    const checkPermissions = usePermissions(myMember.getIn(["role", "name"]));
+
     const handleSubmitNewRoom = ({ name, type }) => {
         if (type === "text") createNewRoom(id, { name });
         handleCloseDialog();
     };
+
+    const checkPermissions = usePermissions(myMember.getIn(["role", "name"]));
+
     useEffect(() => {
         setSelectedTextChannel({ serverId: id, index: 0 });
     }, [id, setSelectedTextChannel]);
@@ -108,6 +116,11 @@ const ServerSideBar = ({
                 message={message}
                 open={createRoomDialog}
                 onMessageClose={clearServerMessages}
+            />
+            <DialogCreateInvite
+                handleOnClose={handleCloseInviteDialog}
+                open={createInviteDialog}
+                server={server}
             />
             <Paper className={classes.paper}>
                 <Paper className={classes.header} elevation={1} square>
@@ -132,7 +145,11 @@ const ServerSideBar = ({
                     >
                         {"Invite more peoples to your server and enjoy"}
                     </Typography>
-                    <Button color="primary" variant="contained">
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={handleOpenInviteDialog}
+                    >
                         Invite people
                     </Button>
                 </div>
