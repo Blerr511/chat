@@ -3,7 +3,6 @@ const router = require("express").Router();
 
 const catchHelper = require("../helpers/catch.helper");
 const User = require("../mongodb/schemas/user.schema");
-const { jwtSecret } = require("../config");
 
 const { userErrors } = require("../messages/error/mongoose.error");
 /**
@@ -25,7 +24,7 @@ const handleLogin = async (req, res, next) => {
         const user = req.user ?? (await User.authenticate(username, password));
         const token = sign(
             { _id: user._id, username: user.username, email: user.email },
-            jwtSecret,
+            process.env.JWT_SECRET,
             { expiresIn: "10 h" }
         );
         req.response = {

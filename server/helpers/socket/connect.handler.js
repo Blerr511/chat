@@ -22,7 +22,7 @@ module.exports = (io) => {
         delete io.sockets.connected[socket.id];
         const verifyOptions = {
             timeout: 3000,
-            token: config.jwtSecret,
+            token: process.env.JWT_SECRET,
         };
 
         const tmr = setTimeout(() => {

@@ -2,13 +2,11 @@
     "dev": {
         "PORT": 8080,
         "mongoString": "mongodb://localhost:27017/chat",
-        "jwtSecret": "verySecretKey",
         "corsOrigin": "http://localhost:3000"
     },
     "prod": {
         "PORT": 9999,
         "mongoString": "mongodb://production:27017/chat",
-        "jwtSecret": "verySecretKeyproduction",
         "corsOrigin": "http://localhost:3000"
     }
 }

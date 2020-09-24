@@ -1,5 +1,4 @@
 const { verify } = require("jsonwebtoken");
-const { jwtSecret } = require("../config");
 /**
  * @param {import("express").Request} req
  * @param {import("express").Response} res
@@ -12,7 +11,7 @@ module.exports = (req, res, next) => {
         if (token && token.startsWith("Bearer ")) {
             token = token.slice(7, token.length);
         }
-        verify(token, jwtSecret, (err, decoded) => {
+        verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) throw new Error(err);
             if (decoded.exp < Date.now() / 1000)
                 throw new Error("Token is out of date");
