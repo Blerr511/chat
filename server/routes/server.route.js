@@ -70,13 +70,39 @@ const handleCreateServer = async (req, res, next) => {
 };
 
 /**
+ * @type {import('express').RequestHandler}
+ */
+const handleJoinServer = async (req, res, next) => {
+    try {
+        const {
+            params: { serverId },
+            user: { _id: userId },
+        } = req;
+        const server = await Server.findById(serverId);
+        const member = new Member({ user: userId });
+        server.members.push(member);
+        await server.save();
+        getSocketByUserId(userId)?.join(serverId);
+        const payload = await Member.populate(member);
+        io.to(serverId).emit("action", newMemberAction(payload));
+        req.response = {
+            code: 200,
+            status: "success",
+            message: "Success joined to server",
+        };
+    } catch (error) {
+        catchHelper(req, error);
+    }
+    next();
+};
+
+/**
  * Handle create new room for in server
  * @type {import("express").RequestHandler}
  */
 const handleAddNewRoomToServer = async (req, res, next) => {
     try {
         const {
-            user,
             body: { name },
             params: { serverId },
         } = req;
@@ -95,7 +121,7 @@ const handleAddNewRoomToServer = async (req, res, next) => {
         // const data = await Server.populate(server, {
         //     path: "members.user members.role",
         // });
-        getSocketByUserId(user._id).emit(
+        io.to(server._id).emit(
             "action",
             newRoomCreated({ serverId, data: room })
         );
@@ -159,6 +185,8 @@ const handleLeaveRoom = async (req, res, next) => {
 
 router.get("/", handleGetServers);
 router.post("/", multerHelper.upload.single("serverIcon"), handleCreateServer);
+
+router.post("/:serverId/join", handleJoinServer);
 
 router.post(
     "/:serverId/newRoom",
