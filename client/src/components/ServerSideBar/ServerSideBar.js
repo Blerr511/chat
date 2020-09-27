@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
         borderRadius: 0,
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.secondary,
         height: "100%",
     },
     header: {
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         fontSize: theme.typography.pxToRem(12),
         "&[data-active=true]": {
-            backgroundColor: theme.palette.background.selected,
+            backgroundColor: theme.palette.background.modifierSelected,
         },
     },
     headerContainer: {
@@ -94,14 +94,15 @@ const ServerSideBar = ({
     const handleOpenDialog = () => setCreateRoomDialog(true);
     const handleCloseInviteDialog = () => setCreateInviteDialog(false);
     const handleOpenInviteDialog = () => setCreateInviteDialog(true);
-    const [, myMember] = members.findEntry((v) => v._id === myUser);
-
+    const [, myMember] = members.findEntry(
+        (v) => v.getIn(["user", "_id"]) === myUser?.get("_id")
+    );
     const handleSubmitNewRoom = ({ name, type }) => {
         if (type === "text") createNewRoom(id, { name });
         handleCloseDialog();
     };
 
-    const checkPermissions = usePermissions(myMember.getIn(["role", "name"]));
+    const checkPermissions = usePermissions(myMember?.getIn(["role", "name"]));
 
     useEffect(() => {
         setSelectedTextChannel({ serverId: id, index: 0 });

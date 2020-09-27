@@ -26,13 +26,13 @@ const styles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
         borderRadius: 0,
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.secondary,
         height: "100%",
     },
     searchBar: {
         borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
         borderRight: "1px solid rgba(0, 0, 0, 0.12)",
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.secondary,
         flex: 1,
     },
     searchInput: {

@@ -20,7 +20,6 @@ const DialogCreateInvite = ({ open, handleOnClose, server }) => {
                     serverId: server.get("_id"),
                 })
                 .then((data) => {
-                    console.log(data.data);
                     setToken(data.data);
                 })
                 .catch(console.error);

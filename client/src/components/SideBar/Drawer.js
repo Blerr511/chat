@@ -13,7 +13,7 @@ import { FaceOutlined } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
     container: {
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.secondary,
         height: "100%",
         width: "400px",
     },

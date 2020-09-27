@@ -1,31 +1,31 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { makeStyles, Paper } from "@material-ui/core";
-import SideBar from "../../components/SideBar/SideBar";
-import { _getMyRooms } from "../../actions/room.action";
+import SideBar from "../components/SideBar/SideBar";
+import { _getMyRooms } from "../actions/room.action";
 import { connect } from "react-redux";
-import { searchUsers, searchUsersFakeLoading } from "../../actions/user.action";
-import MessageBar from "./MessageBar";
+import { searchUsers, searchUsersFakeLoading } from "../actions/user.action";
+import MessageBar from "../containers/UserScreen/MessageBar";
 import {
     clearServerMessages,
     createNewServerRoom,
     createServer,
     getServers,
     serverSetActiveChannel,
-} from "../../actions/server.action";
-import ServerList from "../../components/SideBar/ServerList";
-import DialogCreateServer from "../../components/Dialog/DialogCreateServer";
-import ServerSideBar from "../../components/ServerSideBar/ServerSideBar";
-import { _getRoles } from "../../actions/permissions.action";
+} from "../actions/server.action";
+import ServerList from "../components/SideBar/ServerList";
+import DialogCreateServer from "../components/Dialog/DialogCreateServer";
+import ServerSideBar from "../components/ServerSideBar/ServerSideBar";
+import { _getRoles } from "../actions/permissions.action";
 import {
     sendSocketAction,
     SOCKET_ACTION_TYPES,
-} from "../../helpers/socketIo.middleware";
+} from "../helpers/socketIo.middleware";
 const styles = makeStyles((theme) => ({
     container: {
         flex: 1,
         flexDirection: "row",
         display: "flex",
-        backgroundColor: theme.palette.background.dark,
+        backgroundColor: theme.palette.background.tertiary,
     },
     paper: {
         flex: 1,
@@ -61,7 +61,6 @@ const UserScreen = ({
     sendSocketAction,
 }) => {
     const classes = styles();
-
     const [activeServer, setActiveServer] = useState(null);
     const loading1 = rooms.get("loading");
     const loading2 = users.get("loading");
@@ -170,7 +169,7 @@ const UserScreen = ({
 };
 
 const mapStateToProps = (state) => ({
-    user: state.auth.user,
+    user: state.auth.get('user'),
     rooms: state.rooms,
     users: state.users,
     server: state.server,

@@ -15,7 +15,7 @@ import { Map, List } from "immutable";
 import { sendSocketMessage } from "../../helpers/socketIo.middleware";
 const useStyles = makeStyles((theme) => ({
     paper: {
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.primary,
         flex: 4,
         display: "flex",
         flexDirection: "column",
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         position: "relative",
     },
     messageBox: {
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.primary,
         overflow: "auto",
         position: "absolute",
         top: theme.spacing(2),
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(3),
     },
     senderBox: {
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.secondary,
         padding: "20px",
         marginTop: "20px",
         display: "flex",

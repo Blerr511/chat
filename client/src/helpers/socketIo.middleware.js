@@ -61,7 +61,6 @@ const createSocketIoMiddleware = (socketOptions) => {
 const initSocketEvents = (socket, store) => {
     socket.removeAllListeners();
     socket.on("action", (action) => {
-        console.log(action)
         const { valid, error } = isValid(action);
         if (valid) {
             store.dispatch(action);

@@ -1,14 +1,15 @@
 import React, { useEffect, createContext, useState } from "react";
 import "./App.css";
-import SignIn from "./components/Auth/Auth";
+import SignIn from "./Routes/Auth";
 import { CircularProgress, Container, ThemeProvider } from "@material-ui/core";
 import { connect } from "react-redux";
 import { _login, _signUp, _clearAuthMessages } from "./actions/auth.action";
-import UserScreen from "./containers/UserScreen/UserScreen";
+import UserScreen from "./Routes/UserScreen";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import SignUp from "./components/Auth/SignUp";
+import SignUp from "./Routes/SignUp";
 import themes from "./themes";
-window.jsonschema = require('json-schema')
+import Invite from "./Routes/Invite";
+window.jsonschema = require("json-schema");
 export const ThemeController = createContext();
 
 const App = ({ auth, login, signUp, clear }) => {
@@ -54,6 +55,7 @@ const App = ({ auth, login, signUp, clear }) => {
                                 );
                             }}
                         ></Route>
+                        <Route path={"/invite/:token"} component={Invite} />
                         <Route
                             path={"/login"}
                             render={({ location }) => {

@@ -47,7 +47,7 @@ const server = (state = initialState, { type, payload }) => {
                 mutable.set("message", payload.message);
                 mutable.setIn(
                     ["list", mutable.get("list").size],
-                    fromJS(payload.data).map((el) => el.set("activeRoom", 0))
+                    fromJS(payload.data).set("activeRoom", 0)
                 );
                 return mutable;
             });

@@ -1,4 +1,4 @@
-import { Map } from "immutable";
+import { fromJS, Map } from "immutable";
 import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
@@ -29,7 +29,7 @@ const auth = (state = initialState, { type, payload }) => {
             return state.withMutations((mutable) => {
                 mutable.set("loading", false);
                 mutable.set("loggedIn", true);
-                mutable.set("user", payload);
+                mutable.set("user", fromJS(payload));
                 return mutable;
             });
         case LOGIN_FAILURE:
