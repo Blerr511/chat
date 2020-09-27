@@ -8,6 +8,8 @@ const multerHelper = require("../helpers/multer.helper");
 const permissionMiddleware = require("../middleware/permission.middleware");
 const { Member } = require("../mongodb/schemas/member.schema");
 const { newRoomCreated } = require("../helpers/actions/newRoom.action");
+const { Token } = require("../mongodb/schemas/token.schema");
+const { newMemberAction } = require("../helpers/actions/newMember.action");
 
 const router = require("express").Router();
 /**
@@ -77,13 +79,29 @@ const handleJoinServer = async (req, res, next) => {
         const {
             params: { serverId },
             user: { _id: userId },
+            body: { token: key },
         } = req;
+        const _token = await Token.findOne({ key });
+        if (!_token) throw new Error("Invite is not valid");
+        if (_token.useCount < 2) {
+            await _token.remove();
+        } else if (_token.useCount < Infinity) {
+            _token.useCount--;
+            await _token.save();
+        }
         const server = await Server.findById(serverId);
+        if (!server) throw new Error("server not found");
+        for (let i = 0; i < server.members.length; i++) {
+            // TODO - make member unique from mongoose schema
+            const m = server.members[i];
+            if (m.user.toString() === userId)
+                throw new Error("User already joined to this server");
+        }
         const member = new Member({ user: userId });
         server.members.push(member);
         await server.save();
         getSocketByUserId(userId)?.join(serverId);
-        const payload = await Member.populate(member);
+        const payload = await Member.populate(member, { path: "user role" });
         io.to(serverId).emit("action", newMemberAction(payload));
         req.response = {
             code: 200,

@@ -22,6 +22,11 @@ const TokenSchema = new mongoose.Schema({
         type: Number,
         default: Infinity,
     },
+    sender: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required: true,
+    },
 });
 
 // Expire at the time indicated by the expireAt field

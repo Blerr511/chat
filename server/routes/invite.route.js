@@ -22,7 +22,13 @@ const generateToken = async (req, res, next) => {
             expiresIn ? { expiresIn: expiresIn * 1000 } : {}
         );
         const key = uniqid.time();
-        const dbToken = new Token({ key, value: token, expiresIn, useCount });
+        const dbToken = new Token({
+            key,
+            value: token,
+            expiresIn,
+            useCount,
+            sender: user._id,
+        });
         await dbToken.save();
         req.response = {
             code: 200,
@@ -43,15 +49,9 @@ const checkToken = async (req, res, next) => {
         const {
             query: { invite },
         } = req;
-        const _token = await Token.findOne({ key: invite });
+        const _token = await Token.findOne({ key: invite }).populate("user");
         if (!_token) throw new Error("Invite is not valid");
         const token = _token.value;
-        if (_token.useCount < 2) {
-            await _token.remove();
-        } else if (_token.useCount < Infinity) {
-            _token.useCount--;
-            await _token.save();
-        }
         verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) throw new Error(err);
             if (decoded.exp < Date.now() / 1000)

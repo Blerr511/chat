@@ -9,12 +9,10 @@ const { RoomSchema } = require("./room.schema");
 
 const ServerSchema = new Schema({
     name: { type: String, required: [true, "Server name is required"] },
-    members: [
-        {
-            type: MemberSchema,
-            index: { unique: true, dropDups: true },
-        },
-    ],
+    members: {
+        type: [MemberSchema],
+    },
+
     rooms: [{ type: RoomSchema }],
     icon: { type: String, default: null },
 });
