@@ -14,10 +14,11 @@ import { HoverSquare } from "../StyledComponents/HoverSquare.group";
 
 const styles = makeStyles((theme) => ({
     container: {
-        paddingLeft: "0.4em",
+        paddingTop: theme.spacing(1.5),
         display: "flex",
         flexDirection: "column",
-        width: "70px",
+        alignItems: "center",
+        width: "72px",
         height: "100vh",
         overflow: "auto",
         direction: "ltr",
@@ -33,13 +34,25 @@ const styles = makeStyles((theme) => ({
         },
     },
     avatarContainer: {
-        margin: "8px",
+        marginBottom: theme.spacing(1),
         borderRadius: "10px",
-        width: "50px",
-        height: "50px",
+        width: "100%",
+        height: "48px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+    },
+    dividerContainer: {
+        width: theme.spacing(9),
+        position: "relative",
+        marginBottom: theme.spacing(1),
+    },
+    divider: {
+        width: theme.spacing(4),
+        margin: "auto",
+        marginBottom: theme.spacing(1),
+        height: "2px",
+        backgroundColor:theme.palette.background.modifierAccent
     },
 }));
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -75,9 +88,9 @@ const ServerList = ({
                         <Forum style={{ width: "30px", height: "30px" }} />
                     </HoverSquare.IconButton>
                 </ListItemAvatar>
-                <Divider
-                    style={{ width: "50%", position: "relative", left: "25%" }}
-                />
+                <div className={classes.dividerContainer}>
+                    <Divider className={classes.divider} />
+                </div>
                 {servers.map((el, i) => {
                     return (
                         <ListItemAvatar
@@ -98,11 +111,19 @@ const ServerList = ({
                                 >
                                     <HoverSquare.Avatar
                                         data-active={active === i}
-                                        alt={el.get("name")[0]}
+                                        alt={el.get("name")}
                                         src={el.get("icon")}
                                         defaultChecked
+                                        style={{
+                                            fontSize: `${
+                                                el.get("name").length > 10
+                                                    ? 10
+                                                    : 20 - el.get("name").length
+                                            }px`,
+                                        }}
                                     >
-                                        {!el.get("icon") && el.get("name")[0]}
+                                        {!el.get("icon") &&
+                                            el.get("name").slice(0, 7)}
                                     </HoverSquare.Avatar>
                                 </Tooltip>
                             </IconButton>

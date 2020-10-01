@@ -1,25 +1,28 @@
 import { withStyles } from "@material-ui/core";
 import _Avatar from "@material-ui/core/Avatar";
 import _IconButton from "@material-ui/core/IconButton";
+
 const avatarStyles = (theme) => ({
     root: {
         position: "relative",
-        width: "50px",
-        height: "50px",
+        width: "48px",
+        height: "48px",
         overflow: "visible",
+        color: theme.palette.text.normal,
         "&[data-active=true],&:hover": {
-            borderRadius: "10px",
+            borderRadius: theme.shape.serverIconBorderRadius,
+            color: theme.palette.text.primary,
         },
         "&::after": {
             content: '""',
             display: "block",
-            width: 5,
+            width: 8,
             backgroundColor:
                 theme.palette.type === "dark"
                     ? theme.palette.grey[100]
                     : theme.palette.grey[600],
             position: "absolute",
-            left: -14,
+            left: -16,
             height: 25,
             top: 13,
             borderBottomRightRadius: 5,
@@ -40,7 +43,7 @@ const avatarStyles = (theme) => ({
 
     colorDefault: {
         "&[data-active='true'],&:hover": {
-            backgroundColor: theme.palette.primary.light,
+            backgroundColor: theme.palette.primary.main,
         },
     },
 });
@@ -51,7 +54,7 @@ const iconButtonStyles = (theme) => ({
         height: "50px",
         overflow: "visible",
         "&[data-active=true],&:hover": {
-            borderRadius: "10px",
+            borderRadius: theme.shape.serverIconBorderRadius,
         },
         "&::after": {
             content: '""',

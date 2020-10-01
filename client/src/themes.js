@@ -55,6 +55,9 @@ export const dark = createMuiTheme({
         tonalOffset: 0.2,
         type: "dark",
     },
+    shape: {
+        serverIconBorderRadius: "16px",
+    },
     typography: {
         fontWeightLight: 100,
         button: {

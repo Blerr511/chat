@@ -32,7 +32,6 @@ const styles = makeStyles((theme) => ({
         overflow: "hidden",
         display: "flex",
         height: "calc(100vh - 20px)",
-        margin: "20px 20px 0 20px",
     },
 }));
 
@@ -169,7 +168,7 @@ const UserScreen = ({
 };
 
 const mapStateToProps = (state) => ({
-    user: state.auth.get('user'),
+    user: state.auth.get("user"),
     rooms: state.rooms,
     users: state.users,
     server: state.server,
