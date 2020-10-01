@@ -14,7 +14,6 @@ import { HoverSquare } from "../StyledComponents/HoverSquare.group";
 
 const styles = makeStyles((theme) => ({
     container: {
-        paddingTop: theme.spacing(1.5),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -32,6 +31,9 @@ const styles = makeStyles((theme) => ({
             backgroundColor: theme.palette.primary.dark,
             outline: "1px solid slategrey",
         },
+    },
+    contDiv: {
+        paddingTop: theme.spacing(1.5),
     },
     avatarContainer: {
         marginBottom: theme.spacing(1),
@@ -52,7 +54,7 @@ const styles = makeStyles((theme) => ({
         margin: "auto",
         marginBottom: theme.spacing(1),
         height: "2px",
-        backgroundColor:theme.palette.background.modifierAccent
+        backgroundColor: theme.palette.background.modifierAccent,
     },
 }));
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -76,7 +78,7 @@ const ServerList = ({
     // const avatarClasses = useAvatarStyles();
     return (
         <div className={classes.container}>
-            <div>
+            <div className={classes.contDiv}>
                 <ListItemAvatar className={classes.avatarContainer}>
                     <HoverSquare.IconButton
                         style={{ padding: "10px" }}

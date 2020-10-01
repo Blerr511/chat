@@ -50,8 +50,8 @@ const avatarStyles = (theme) => ({
 const iconButtonStyles = (theme) => ({
     root: {
         position: "relative",
-        width: "50px",
-        height: "50px",
+        width: "48px",
+        height: "48px",
         overflow: "visible",
         "&[data-active=true],&:hover": {
             borderRadius: theme.shape.serverIconBorderRadius,
@@ -59,13 +59,13 @@ const iconButtonStyles = (theme) => ({
         "&::after": {
             content: '""',
             display: "block",
-            width: 5,
+            width: 8,
             backgroundColor:
                 theme.palette.type === "dark"
                     ? theme.palette.grey[100]
                     : theme.palette.grey[600],
             position: "absolute",
-            left: -14,
+            left: -16,
             height: 25,
             top: 13,
             borderBottomRightRadius: 5,

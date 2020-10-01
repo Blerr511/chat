@@ -31,7 +31,8 @@ const styles = makeStyles((theme) => ({
         flex: 1,
         overflow: "hidden",
         display: "flex",
-        height: "calc(100vh - 20px)",
+        height: "100vh",
+        borderRadius: 0,
     },
 }));
 
@@ -119,13 +120,7 @@ const UserScreen = ({
                 handleCreateClick={handleCreateClick}
             />
             <Paper className={classes.paper}>
-                <div
-                    style={{
-                        flex: 1,
-                        maxWidth: 768,
-                        height: "100%",
-                    }}
-                >
+                <div>
                     {activeServer === null && (
                         <SideBar
                             getMyRooms={getMyRooms}

@@ -57,6 +57,7 @@ export const dark = createMuiTheme({
     },
     shape: {
         serverIconBorderRadius: "16px",
+        sideBarWidth: 240,
     },
     typography: {
         fontWeightLight: 100,

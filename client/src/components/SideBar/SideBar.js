@@ -20,8 +20,7 @@ import { WbSunny, Brightness3 } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
     paper: {
-        flex: 1,
-        maxWidth: 768,
+        width: theme.shape.sideBarWidth,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",

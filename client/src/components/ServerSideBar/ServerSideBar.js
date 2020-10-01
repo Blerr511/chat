@@ -16,8 +16,7 @@ import { Styled } from "../StyledComponents/Styled.group";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        flex: 1,
-        maxWidth: 768,
+        width: 240,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -29,11 +28,18 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: theme.spacing(2),
-        paddingLeft: theme.spacing(3),
+        padding: theme.spacing(0, 2),
+        height: "48px",
+        boxSizing: "border-box",
+        backgroundColor: theme.palette.background.secondary,
     },
     title: {
-        fontSize: theme.typography.pxToRem(24),
+        fontSize: theme.typography.pxToRem(16),
+        color: theme.palette.text.primary,
+        fontWeight: 600,
+        lineHeight:20,
+        textOverflow:'ellipsis',
+        
     },
     inviteBlock: {
         flex: 6,
@@ -123,11 +129,11 @@ const ServerSideBar = ({
                 open={createInviteDialog}
                 server={server}
             />
-            <Paper className={classes.paper}>
+            <nav className={classes.paper}>
                 <Paper className={classes.header} elevation={1} square>
                     <Typography
                         component="span"
-                        variant="body2"
+                        variant="h1"
                         className={classes.title}
                         color="textPrimary"
                     >
@@ -213,7 +219,7 @@ const ServerSideBar = ({
                             })}
                     </Collapse>
                 </div>
-            </Paper>
+            </nav>
         </>
     );
 };
