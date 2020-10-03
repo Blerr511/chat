@@ -10,6 +10,7 @@ import {
 import { Add, ChevronRight, ExpandMore, PersonAdd } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import usePermissions from "../../hooks/usePermissions.hook";
+import useStorageState from "../../hooks/useStorageState.hook";
 import DialogCreateInvite from "../Dialog/DialogCreateInvite";
 import DialogCreateRoom from "../Dialog/DialogCreateRoom";
 import { Styled } from "../StyledComponents/Styled.group";
@@ -32,32 +33,62 @@ const useStyles = makeStyles((theme) => ({
         height: "48px",
         boxSizing: "border-box",
         backgroundColor: theme.palette.background.secondary,
+        boxShadow: theme.shadows[1],
     },
     title: {
         fontSize: theme.typography.pxToRem(16),
         color: theme.palette.text.primary,
         fontWeight: 600,
-        lineHeight:20,
-        textOverflow:'ellipsis',
-        
+        lineHeight: 20,
+        textOverflow: "ellipsis",
     },
     inviteBlock: {
-        flex: 6,
-        justifyContent: "center",
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
+        textAlign: "center",
+        position: "relative",
+        boxShadow: `inset 0 -1px 0 ${theme.palette.background.modifierAccent}`,
+        background: `url(${require("../../assets/img/invite_new_m.svg")}) no-repeat center 20px`,
+        padding: "73px 20px 20px",
+    },
+    inviteText: {
+        fontSize: "14px",
+        color: theme.palette.text.normal,
+        lineHeight: "18px",
+        marginTop: theme.spacing(1),
+        "& span": {
+            display: "block",
+        },
     },
     roomContainer: {
-        flex: 16,
-        paddingTop: theme.spacing(1),
         display: "flex",
         flexDirection: "column",
+        boxSizing: "border-box",
+        flex: "1 1 auto",
+        boxShadow: "none",
+    },
+    roomHeaderContainer: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(1),
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        position: "relative",
+        height: theme.spacing(3),
     },
     roomHeaderTitle: {
         justifyContent: "flex-start",
         width: "100%",
-        fontSize: theme.typography.pxToRem(12),
+        fontSize: 12,
+        padding: 0,
+        margin: 0,
+        textTransform: "uppercase",
+        textOverflow: "ellipsis",
+        color: theme.palette.text.channelsDefault,
+        fontWeight: 600,
+        lineHeight: "16px",
+        "&:hover": {
+            color: theme.palette.text.interactiveHover,
+        },
     },
     roomTitle: {
         justifyContent: "flex-start",
@@ -69,7 +100,50 @@ const useStyles = makeStyles((theme) => ({
     },
     headerContainer: {
         display: "flex",
-        justifyContent: "flex-between",
+        position: "relative",
+        paddingTop: theme.spacing(2),
+    },
+    inviteButton: {
+        fontFamily: "Whitney,Helvetica Neue,Helvetica,Arial,sans-serif",
+        border: "none",
+        borderRadius: "3px",
+        fontSize: "14px",
+        height: "38px",
+        padding: theme.spacing(0.25, 2),
+        minWidth: "96px",
+        width: "auto",
+        color: theme.palette.text.primary,
+        margin: theme.spacing(2, "auto", 0),
+        textRendering: "optimizeLegibility",
+        textTransform: "none",
+    },
+    closeInviteBlock: {
+        position: "absolute",
+        top: "12px",
+        right: "16px",
+        width: "18px",
+        height: "18px",
+        color: theme.palette.text.interactiveNormal,
+        cursor: "pointer",
+        "&:hover": {
+            color: theme.palette.text.interactiveHover,
+        },
+    },
+    expandIcon: {
+        position: "absolute",
+        left: 2,
+        top: 6,
+        width: theme.shape.iconSmallest,
+        height: theme.shape.iconSmallest,
+        transition: "transform .2s ease-out,-webkit-transform .2s ease-out",
+        "&[data-expanded=true]": {
+            transform: "rotate(90deg)",
+        },
+    },
+    newRoomIcon: {
+        padding: 0,
+        width: 18,
+        height: 18,
     },
 }));
 
@@ -92,6 +166,10 @@ const ServerSideBar = ({
     const [textChannelExpanded, setTextChannelExpanded] = useState(true);
     const [createRoomDialog, setCreateRoomDialog] = useState(false);
     const [createInviteDialog, setCreateInviteDialog] = useState(false);
+    const [hideInviteBlock, setHideInviteBlock] = useStorageState(
+        "app.hideInviteBlock",
+        false
+    );
     const handleTextExpandClick = () => {
         setTextChannelExpanded((v) => !v);
     };
@@ -100,15 +178,17 @@ const ServerSideBar = ({
     const handleOpenDialog = () => setCreateRoomDialog(true);
     const handleCloseInviteDialog = () => setCreateInviteDialog(false);
     const handleOpenInviteDialog = () => setCreateInviteDialog(true);
+    const handleCloseInviteBlock = () => {
+        setHideInviteBlock(true);
+    };
     const [, myMember] = members.findEntry(
         (v) => v.getIn(["user", "_id"]) === myUser?.get("_id")
     );
+    const checkPermissions = usePermissions(myMember?.getIn(["role", "name"]));
     const handleSubmitNewRoom = ({ name, type }) => {
         if (type === "text") createNewRoom(id, { name });
         handleCloseDialog();
     };
-
-    const checkPermissions = usePermissions(myMember?.getIn(["role", "name"]));
 
     useEffect(() => {
         setSelectedTextChannel({ serverId: id, index: 0 });
@@ -140,44 +220,51 @@ const ServerSideBar = ({
                         {name}
                     </Typography>
                 </Paper>
-                <div className={classes.inviteBlock}>
-                    <PersonAdd
-                        color="action"
-                        style={{ width: 50, height: 50 }}
-                    />
-                    <Typography
-                        style={{
-                            margin: "30px 15% 30px 15%",
-                        }}
-                    >
-                        {"Invite more peoples to your server and enjoy"}
-                    </Typography>
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        onClick={handleOpenInviteDialog}
-                    >
-                        Invite people
-                    </Button>
+                <div>
+                    {!hideInviteBlock && (
+                        <div className={classes.inviteBlock}>
+                            <svg
+                                onClick={handleCloseInviteBlock}
+                                className={classes.closeInviteBlock}
+                                aria-hidden="false"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"
+                                ></path>
+                            </svg>
+                            <Typography className={classes.inviteText}>
+                                <span>{"An adventure begins."}</span>
+                                <span>{"Let's add some friends!"}</span>
+                            </Typography>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                onClick={handleOpenInviteDialog}
+                                className={classes.inviteButton}
+                            >
+                                Invite people
+                            </Button>
+                        </div>
+                    )}
                 </div>
-                <Divider />
                 <div className={classes.roomContainer}>
                     <div className={classes.headerContainer}>
-                        <Styled.TextButtonInverted
-                            variant="text"
-                            onClick={handleTextExpandClick}
-                            disableElevation
-                            disableRipple
-                            disableFocusRipple
-                            className={classes.roomHeaderTitle}
-                        >
-                            {textChannelExpanded ? (
-                                <ExpandMore />
-                            ) : (
-                                <ChevronRight />
-                            )}
-                            Text channels
-                        </Styled.TextButtonInverted>
+                        <div className={classes.roomHeaderContainer}>
+                            <Typography
+                                onClick={handleTextExpandClick}
+                                className={classes.roomHeaderTitle}
+                            >
+                                <ChevronRight
+                                    className={classes.expandIcon}
+                                    data-expanded={textChannelExpanded}
+                                />
+                                Text channels
+                            </Typography>
+                        </div>
                         {checkPermissions("createRoom") && (
                             <Styled.TextButtonInverted
                                 variant="text"
@@ -185,8 +272,14 @@ const ServerSideBar = ({
                                 disableElevation
                                 disableRipple
                                 disableFocusRipple
+                                className={classes.newRoomIcon}
                             >
-                                <Add />
+                                <Add
+                                    style={{
+                                        width: 24,
+                                        height: 24,
+                                    }}
+                                />
                             </Styled.TextButtonInverted>
                         )}
                     </div>
