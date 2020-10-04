@@ -1,4 +1,6 @@
-import { Button, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import _Tooltip from "@material-ui/core/Tooltip";
 
 const textButtonStyles = (theme) => ({
     root: {
@@ -24,12 +26,24 @@ const invertedTextButtonStyles = (theme) => ({
         },
     },
 });
-
+const tooltipStyles = (theme) => ({
+    arrow: {
+        color: theme.palette.common.black,
+    },
+    tooltip: {
+        backgroundColor: theme.palette.common.black,
+        fontSize: theme.typography.pxToRem(16),
+    },
+});
 /**
  * @param {import('@material-ui/core').ButtonProps}
  */
 const TextButton = withStyles(textButtonStyles)(Button);
-
+/**
+ * @param {import('@material-ui/core').ButtonProps}
+ */
 const TextButtonInverted = withStyles(invertedTextButtonStyles)(TextButton);
 
-export const Styled = { TextButton, TextButtonInverted };
+const ToolTip = withStyles(tooltipStyles)(_Tooltip);
+
+export const Styled = { TextButton, TextButtonInverted, ToolTip };

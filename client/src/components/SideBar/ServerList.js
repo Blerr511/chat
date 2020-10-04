@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import { List } from "immutable";
 import { Add, Forum } from "@material-ui/icons";
 import { HoverSquare } from "../StyledComponents/HoverSquare.group";
+import { Styled } from "../StyledComponents/Styled.group";
 
 const styles = makeStyles((theme) => ({
     container: {
@@ -57,15 +58,6 @@ const styles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.modifierAccent,
     },
 }));
-const useStylesBootstrap = makeStyles((theme) => ({
-    arrow: {
-        color: theme.palette.common.black,
-    },
-    tooltip: {
-        backgroundColor: theme.palette.common.black,
-        fontSize: theme.typography.pxToRem(16),
-    },
-}));
 
 const ServerList = ({
     servers = List(),
@@ -74,7 +66,6 @@ const ServerList = ({
     setActive,
 }) => {
     const classes = styles();
-    const tooltipClasses = useStylesBootstrap();
     // const avatarClasses = useAvatarStyles();
     return (
         <div className={classes.container}>
@@ -105,8 +96,7 @@ const ServerList = ({
                                     setActive(i);
                                 }}
                             >
-                                <Tooltip
-                                    classes={tooltipClasses}
+                                <Styled.ToolTip
                                     title={el.get("name")}
                                     placement="right"
                                     arrow
@@ -127,7 +117,7 @@ const ServerList = ({
                                         {!el.get("icon") &&
                                             el.get("name").slice(0, 7)}
                                     </HoverSquare.Avatar>
-                                </Tooltip>
+                                </Styled.ToolTip>
                             </IconButton>
                         </ListItemAvatar>
                     );

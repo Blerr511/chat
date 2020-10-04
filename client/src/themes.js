@@ -30,6 +30,7 @@ export const dark = createMuiTheme({
             messageHover: "rgba(4,4,5,0.07)",
             helpWarning: "rgba(250,166,26,0.1)",
             helpInfo: "rgba(0,176,244,0.1)",
+            interactiveActive: "#fff",
         },
         neutral: {
             main: "#5c6ac4",
@@ -49,6 +50,8 @@ export const dark = createMuiTheme({
             interactiveNormal: "#b9bbbe",
             interactiveHover: "#dcddde",
             channelsDefault: "#8e9297",
+            interactiveMuted: "#4f545c",
+            interactiveActive: "#fff",
         },
         secondary: {
             main: "#2F3136",
@@ -63,6 +66,7 @@ export const dark = createMuiTheme({
         sideBarWidth: 240,
         borderRadius: 3,
         iconSmallest: 12,
+        iconSmaller: 20,
     },
     transitions: {
         duration: {

@@ -1,16 +1,12 @@
-import {
-    Button,
-    Collapse,
-    Divider,
-    ListItem,
-    makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
-import { Add, ChevronRight, ExpandMore, PersonAdd } from "@material-ui/icons";
+import { Button, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Add, ChevronRight } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import usePermissions from "../../hooks/usePermissions.hook";
 import useStorageState from "../../hooks/useStorageState.hook";
+import AddPersonIcon from "../../svg/AddPerson.icon";
+import HashIcon from "../../svg/Hash.icon";
+import SettingsIcon from "../../svg/Settings.icon";
+import XIcon from "../../svg/X.icon";
 import DialogCreateInvite from "../Dialog/DialogCreateInvite";
 import DialogCreateRoom from "../Dialog/DialogCreateRoom";
 import { Styled } from "../StyledComponents/Styled.group";
@@ -64,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
         boxSizing: "border-box",
         flex: "1 1 auto",
         boxShadow: "none",
+        paddingRight: theme.spacing(1),
     },
     roomHeaderContainer: {
         paddingLeft: theme.spacing(2),
@@ -86,16 +83,28 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.channelsDefault,
         fontWeight: 600,
         lineHeight: "16px",
+        flex: "1 1 auto",
+        cursor: "pointer",
         "&:hover": {
             color: theme.palette.text.interactiveHover,
         },
     },
     roomTitle: {
-        justifyContent: "flex-start",
-        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+        marginLeft: theme.spacing(1),
+        width: `calc(100% - ${theme.spacing(1)}px)`,
         fontSize: theme.typography.pxToRem(12),
+        paddingLeft: theme.spacing(1),
+        color: theme.palette.text.channelsDefault,
+        marginBottom: "2px",
         "&[data-active=true]": {
             backgroundColor: theme.palette.background.modifierSelected,
+            color: theme.palette.text.interactiveActive,
+        },
+        "&[data-active=false]:hover": {
+            backgroundColor: theme.palette.background.modifierHover,
+            color: theme.palette.text.interactiveHover,
         },
     },
     headerContainer: {
@@ -144,6 +153,31 @@ const useStyles = makeStyles((theme) => ({
         padding: 0,
         width: 18,
         height: 18,
+        flex: "0 0 auto",
+        "& svg": {
+            width: 18,
+            height: 18,
+        },
+        color: theme.palette.text.channelsDefault,
+        cursor: "pointer",
+        "&:hover": {
+            color: theme.palette.text.interactiveHover,
+        },
+    },
+    iconHash: {
+        width: theme.shape.iconSmaller,
+        height: theme.shape.iconSmaller,
+        color: theme.palette.text.muted,
+        marginRight: "6px",
+    },
+    actionContainer: {
+        display: "flex",
+    },
+    actionIcon: {
+        color: theme.palette.text.interactiveNormal,
+        "&:hover": {
+            color: theme.palette.text.interactiveHover,
+        },
     },
 }));
 
@@ -163,7 +197,10 @@ const ServerSideBar = ({
         id = server.get("_id"),
         selectedTextChannel = server.get("activeRoom");
     const classes = useStyles();
-    const [textChannelExpanded, setTextChannelExpanded] = useState(true);
+    const [textChannelExpanded, setTextChannelExpanded] = useStorageState(
+        `app.server_${id}.textChannelCollapsed`,
+        true
+    );
     const [createRoomDialog, setCreateRoomDialog] = useState(false);
     const [createInviteDialog, setCreateInviteDialog] = useState(false);
     const [hideInviteBlock, setHideInviteBlock] = useStorageState(
@@ -223,19 +260,10 @@ const ServerSideBar = ({
                 <div>
                     {!hideInviteBlock && (
                         <div className={classes.inviteBlock}>
-                            <svg
+                            <XIcon
                                 onClick={handleCloseInviteBlock}
                                 className={classes.closeInviteBlock}
-                                aria-hidden="false"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    fill="currentColor"
-                                    d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"
-                                ></path>
-                            </svg>
+                            />
                             <Typography className={classes.inviteText}>
                                 <span>{"An adventure begins."}</span>
                                 <span>{"Let's add some friends!"}</span>
@@ -264,53 +292,149 @@ const ServerSideBar = ({
                                 />
                                 Text channels
                             </Typography>
+                            {checkPermissions("createRoom") && (
+                                <Typography
+                                    onClick={handleOpenDialog}
+                                    className={classes.newRoomIcon}
+                                >
+                                    <Add />
+                                </Typography>
+                            )}
                         </div>
-                        {checkPermissions("createRoom") && (
-                            <Styled.TextButtonInverted
-                                variant="text"
-                                onClick={handleOpenDialog}
-                                disableElevation
-                                disableRipple
-                                disableFocusRipple
-                                className={classes.newRoomIcon}
-                            >
-                                <Add
-                                    style={{
-                                        width: 24,
-                                        height: 24,
-                                    }}
-                                />
-                            </Styled.TextButtonInverted>
-                        )}
                     </div>
 
-                    <Collapse in={textChannelExpanded}>
-                        {rooms &&
-                            rooms.map((el, i) => {
-                                return (
-                                    <ListItem
-                                        key={el.get("_id")}
-                                        style={{ width: "100%" }}
+                    {rooms && textChannelExpanded ? (
+                        rooms.map((el, i) => {
+                            return (
+                                <div key={el.get("_id")}>
+                                    <Button
+                                        variant="text"
+                                        className={classes.roomTitle}
+                                        data-active={selectedTextChannel === i}
+                                        onClick={() =>
+                                            setSelectedTextChannel({
+                                                serverId: id,
+                                                index: i,
+                                            })
+                                        }
                                     >
-                                        <Button
-                                            variant="text"
-                                            className={classes.roomTitle}
-                                            data-active={
-                                                selectedTextChannel === i
-                                            }
-                                            onClick={() =>
-                                                setSelectedTextChannel({
-                                                    serverId: id,
-                                                    index: i,
-                                                })
-                                            }
+                                        <span
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
                                         >
-                                            {el.get("name")}
-                                        </Button>
-                                    </ListItem>
-                                );
-                            })}
-                    </Collapse>
+                                            <HashIcon
+                                                className={classes.iconHash}
+                                            />{" "}
+                                            <Typography
+                                                style={{
+                                                    textTransform: "none",
+                                                    lineHeight: 1,
+                                                }}
+                                            >
+                                                {el.get("name")}
+                                            </Typography>
+                                        </span>
+                                        {checkPermissions("editRoom") &&
+                                            selectedTextChannel === i && (
+                                                <div
+                                                    className={
+                                                        classes.actionContainer
+                                                    }
+                                                >
+                                                    <Styled.ToolTip
+                                                        title={"Create Invite"}
+                                                        placement="top"
+                                                        arrow
+                                                    >
+                                                        <AddPersonIcon
+                                                            className={
+                                                                classes.actionIcon
+                                                            }
+                                                        />
+                                                    </Styled.ToolTip>
+                                                    <Styled.ToolTip
+                                                        title={"Edit channel"}
+                                                        placement="top"
+                                                        arrow
+                                                    >
+                                                        <SettingsIcon
+                                                            style={{
+                                                                marginLeft:
+                                                                    "4px",
+                                                            }}
+                                                            className={
+                                                                classes.actionIcon
+                                                            }
+                                                        />
+                                                    </Styled.ToolTip>
+                                                </div>
+                                            )}
+                                    </Button>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div key={rooms.getIn([selectedTextChannel, "_id"])}>
+                            <Button
+                                variant="text"
+                                className={classes.roomTitle}
+                                data-active={true}
+                                onClick={() =>
+                                    setSelectedTextChannel({
+                                        serverId: id,
+                                        index: selectedTextChannel,
+                                    })
+                                }
+                            >
+                                <span
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <HashIcon className={classes.iconHash} />{" "}
+                                    <Typography
+                                        style={{
+                                            textTransform: "none",
+                                            lineHeight: 1,
+                                        }}
+                                    >
+                                        {rooms.getIn([
+                                            selectedTextChannel,
+                                            "name",
+                                        ])}
+                                    </Typography>
+                                </span>
+                                {checkPermissions("editRoom") && (
+                                    <div className={classes.actionContainer}>
+                                        <Styled.ToolTip
+                                            title={"Create Invite"}
+                                            placement="top"
+                                            arrow
+                                        >
+                                            <AddPersonIcon
+                                                className={classes.actionIcon}
+                                            />
+                                        </Styled.ToolTip>
+                                        <Styled.ToolTip
+                                            title={"Edit channel"}
+                                            placement="top"
+                                            arrow
+                                        >
+                                            <SettingsIcon
+                                                style={{
+                                                    marginLeft: "4px",
+                                                }}
+                                                className={classes.actionIcon}
+                                            />
+                                        </Styled.ToolTip>
+                                    </div>
+                                )}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </nav>
         </>
