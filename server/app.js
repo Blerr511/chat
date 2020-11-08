@@ -1,48 +1,17 @@
-require("colors");
-const config = require("./config");
-const express = require("express");
-const { server, io, app } = require("./helpers/createServer.helper");
-
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const path = require("path");
-// ---------------------------------------------------------- //
-const connectMongo = require("./mongodb/mongooseConnect");
-const responseMiddleware = require("./middleware/response.middleware");
-const loginApi = require("./routes/login.route");
-const registerApi = require("./routes/register.api");
-const authMiddleware = require("./middleware/auth.middleware");
-const connectHandler = require("./helpers/socket/connect.handler");
-const roomApi = require("./routes/room.route");
-const usersRoute = require("./routes/users.route");
-const serverRoute = require("./routes/server.route");
-const permissionRoute = require("./routes/permission.route");
-const inviteRoute = require("./routes/invite.route");
-const { configureAwsS3 } = require("./helpers/multer.helper");
+const app = require('./services/express');
+const server = require('http').createServer(app);
+const createIo = require('./services/socket.io');
+createIo(server);
 // ----------------------------------------------s------------ //
-app.use(cors({ origin: config.corsOrigin }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("build"));
-// ------------------------------- //
-app.post("/api/register", registerApi, responseMiddleware);
-// ------------------------------- //
-app.use("/api/*", authMiddleware);
-app.use("/api/login", loginApi, responseMiddleware);
-app.use("/api/room", roomApi, responseMiddleware);
-app.use("/api/users", usersRoute, responseMiddleware);
-app.use("/api/server", serverRoute, responseMiddleware);
-app.use("/api/permissions", permissionRoute, responseMiddleware);
-app.use("/api/token", inviteRoute, responseMiddleware);
-
-app.get("/*", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+const connectMongo = require('./mongodb/mongooseConnect');
+const AWS_S3 = require('./helpers/aws/S3');
 // ---------- CONNECTING TO MONGODB AND SOCKET IO ----------- //
 connectMongo();
-connectHandler(io);
-configureAwsS3();
+AWS_S3.configureAwsS3();
 // ---------------------------------------------------------- //
-server.listen(process.env.PORT || config.PORT, () => {
-    console.info("Listening to port - " + config.PORT.toString().blue);
+server.listen(process.env.PORT || 8080, () => {
+    require('colors');
+    console.info(
+        'Listening to port - ' + (process.env.PORT || 8080).toString().blue
+    );
 });

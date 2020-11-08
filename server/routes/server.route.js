@@ -1,17 +1,17 @@
-const { Server } = require("../mongodb/schemas/server.schema");
-const catchHelper = require("../helpers/catch.helper");
-const { Room } = require("../mongodb/schemas/room.schema");
-const { getSocketByUserId } = require("../helpers/socket.helper");
-const { io } = require("../helpers/createServer.helper");
-const { d_SOCKET_NEW_MEMBER } = require("../constants/socketEvents.constant");
-const multerHelper = require("../helpers/multer.helper");
-const permissionMiddleware = require("../middleware/permission.middleware");
-const { Member } = require("../mongodb/schemas/member.schema");
-const { newRoomCreated } = require("../helpers/actions/newRoom.action");
-const { Token } = require("../mongodb/schemas/token.schema");
-const { newMemberAction } = require("../helpers/actions/newMember.action");
+const { Server } = require('../mongodb/schemas/server.schema');
+const catchHelper = require('../helpers/catch.helper');
+const { Room } = require('../mongodb/schemas/room.schema');
+const { getSocketByUserId } = require('../helpers/socket.helper');
+const { io } = require('../helpers/createServer.helper');
+const { d_SOCKET_NEW_MEMBER } = require('../constants/socketEvents.constant');
+const s3 = require('../helpers/aws/S3');
+const permissionMiddleware = require('../middleware/permission.middleware');
+const { Member } = require('../mongodb/schemas/member.schema');
+const { newRoomCreated } = require('../helpers/actions/newRoom.action');
+const { Token } = require('../mongodb/schemas/token.schema');
+const { newMemberAction } = require('../helpers/actions/newMember.action');
 
-const router = require("express").Router();
+const router = require('express').Router();
 /**
  * Handle get server request
  * @type {import("express").RequestHandler}
@@ -25,8 +25,8 @@ const handleGetServers = async (req, res, next) => {
         });
         req.response = {
             code: 200,
-            status: "success",
-            message: "Ok",
+            status: 'success',
+            message: 'Ok',
             data: servers,
         };
     } catch (error) {
@@ -44,9 +44,9 @@ const handleCreateServer = async (req, res, next) => {
         const { user } = req;
         const icon = req.file?.location;
         const admin = new Member({ user: user._id });
-        await admin.setRole("admin");
+        await admin.setRole('admin');
         const room = new Room({
-            name: "Main room",
+            name: 'Main room',
         });
         const server = new Server({
             name,
@@ -57,12 +57,12 @@ const handleCreateServer = async (req, res, next) => {
         await server.save();
         getSocketByUserId(user._id)?.join(server._id);
         const data = await Server.populate(server, {
-            path: "members.user members.role",
+            path: 'members.user members.role',
         });
         req.response = {
             code: 200,
-            status: "success",
-            message: "Server success created",
+            status: 'success',
+            message: 'Server success created',
             data,
         };
     } catch (error) {
@@ -82,7 +82,7 @@ const handleJoinServer = async (req, res, next) => {
             body: { token: key },
         } = req;
         const _token = await Token.findOne({ key });
-        if (!_token) throw new Error("Invite is not valid");
+        if (!_token) throw new Error('Invite is not valid');
         if (_token.useCount < 2) {
             await _token.remove();
         } else if (_token.useCount < Infinity) {
@@ -90,23 +90,23 @@ const handleJoinServer = async (req, res, next) => {
             await _token.save();
         }
         const server = await Server.findById(serverId);
-        if (!server) throw new Error("server not found");
+        if (!server) throw new Error('server not found');
         for (let i = 0; i < server.members.length; i++) {
             // TODO - make member unique from mongoose schema
             const m = server.members[i];
             if (m.user.toString() === userId)
-                throw new Error("User already joined to this server");
+                throw new Error('User already joined to this server');
         }
         const member = new Member({ user: userId });
         server.members.push(member);
         await server.save();
         getSocketByUserId(userId)?.join(serverId);
-        const payload = await Member.populate(member, { path: "user role" });
-        io.to(serverId).emit("action", newMemberAction(payload));
+        const payload = await Member.populate(member, { path: 'user role' });
+        io.to(serverId).emit('action', newMemberAction(payload));
         req.response = {
             code: 200,
-            status: "success",
-            message: "Success joined to server",
+            status: 'success',
+            message: 'Success joined to server',
         };
     } catch (error) {
         catchHelper(req, error);
@@ -126,8 +126,8 @@ const handleAddNewRoomToServer = async (req, res, next) => {
         } = req;
         const server = await Server.findById(serverId);
 
-        if (!server) throw new Error("Server not found");
-        if (!name) throw new Error("Room name is required");
+        if (!server) throw new Error('Server not found');
+        if (!name) throw new Error('Room name is required');
         const room = new Room({
             name,
             members: [],
@@ -140,13 +140,13 @@ const handleAddNewRoomToServer = async (req, res, next) => {
         //     path: "members.user members.role",
         // });
         io.to(server._id).emit(
-            "action",
+            'action',
             newRoomCreated({ serverId, data: room })
         );
         req.response = {
             code: 200,
-            status: "success",
-            message: "Room success created",
+            status: 'success',
+            message: 'Room success created',
         };
     } catch (error) {
         catchHelper(req, error);
@@ -168,8 +168,8 @@ const handleJoinToRoom = async (req, res, next) => {
         getSocketByUserId(userId)?.join(roomId);
         req.response = {
             code: 200,
-            status: "success",
-            message: "Success joined",
+            status: 'success',
+            message: 'Success joined',
             data: room,
         };
     } catch (error) {
@@ -192,8 +192,8 @@ const handleLeaveRoom = async (req, res, next) => {
         getSocketByUserId(userId)?.leave(roomId);
         req.response = {
             code: 200,
-            status: "success",
-            message: "Success joined",
+            status: 'success',
+            message: 'Success joined',
         };
     } catch (error) {
         catchHelper(req, error);
@@ -201,18 +201,18 @@ const handleLeaveRoom = async (req, res, next) => {
     next();
 };
 
-router.get("/", handleGetServers);
-router.post("/", multerHelper.upload.single("serverIcon"), handleCreateServer);
+router.get('/', handleGetServers);
+router.post('/', s3.upload.single('serverIcon'), handleCreateServer);
 
-router.post("/:serverId/join", handleJoinServer);
+router.post('/:serverId/join', handleJoinServer);
 
 router.post(
-    "/:serverId/newRoom",
-    permissionMiddleware("createRoom", (req) => req.params.serverId),
+    '/:serverId/newRoom',
+    permissionMiddleware('createRoom', (req) => req.params.serverId),
     handleAddNewRoomToServer
 );
-router.post("/:serverId/:roomId/join", handleJoinToRoom);
-router.post("/:serverId/:roomId/leave", handleLeaveRoom);
+router.post('/:serverId/:roomId/join', handleJoinToRoom);
+router.post('/:serverId/:roomId/leave', handleLeaveRoom);
 // ------------------------------- //
 
 module.exports = router;

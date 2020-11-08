@@ -1,6 +1,6 @@
-const { verify } = require("jsonwebtoken");
 require("colors");
-const config = require("../../config");
+
+const { verify } = require("jsonwebtoken");
 const disconnectHandler = require("./disconnect.handler");
 const messageHandler = require("./message.handler");
 const {

@@ -1,5 +1,7 @@
-const User = require("../mongodb/schemas/user.schema");
-const catchHelper = require("../helpers/catch.helper");
+const User = require('../mongodb/schemas/user.schema');
+const catchHelper = require('../helpers/catch.helper');
+const router = require('express').Router();
+
 // ---------------------------------------------------------- //
 /**
  * @param {import("express").Request} req
@@ -7,15 +9,15 @@ const catchHelper = require("../helpers/catch.helper");
  * @param {import("express").NextFunction} next
  */
 
-module.exports = async (req, res, next) => {
+const onRegister = async (req, res, next) => {
     try {
         const { username, email, password, firstName, lastName } = req.body;
         const requiredFields = {
-            username: "Username",
-            email: "Email",
-            password: "password",
-            firstName: "First Name",
-            lastName: "Last Name",
+            username: 'Username',
+            email: 'Email',
+            password: 'password',
+            firstName: 'First Name',
+            lastName: 'Last Name',
         };
         for (const key in requiredFields) {
             if (!req.body[key])
@@ -27,7 +29,7 @@ module.exports = async (req, res, next) => {
         });
 
         if (existUser)
-            throw new Error("Username or email already using by other user");
+            throw new Error('Username or email already using by other user');
         // ---------------------------------------------------------- //
 
         const user = new User({
@@ -39,8 +41,8 @@ module.exports = async (req, res, next) => {
         await user.setPassword(password);
         await user.save();
         req.response = {
-            status: "success",
-            message: "Success register",
+            status: 'success',
+            message: 'Success register',
             code: 200,
         };
     } catch (error) {
@@ -49,3 +51,5 @@ module.exports = async (req, res, next) => {
 
     next();
 };
+
+module.exports = router.post('/', onRegister);

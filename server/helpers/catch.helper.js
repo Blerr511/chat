@@ -1,5 +1,5 @@
 const { Error } = require("mongoose");
-const { deleteFile } = require("./multer.helper");
+const { deleteFile } = require("./aws/S3");
 module.exports = (req, error, rest) => {
     if (error instanceof Error.ValidationError) {
         const errors = error.errors;
