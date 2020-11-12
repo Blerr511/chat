@@ -53,7 +53,7 @@ const iconButtonStyles = (theme) => ({
         width: "48px",
         height: "48px",
         overflow: "visible",
-        "&[data-active=true],&:hover": {
+        "&[data-active=true],&[data-current=true],&:hover": {
             borderRadius: theme.shape.serverIconBorderRadius,
         },
         "&::after": {
@@ -76,7 +76,7 @@ const iconButtonStyles = (theme) => ({
         "&:hover::after": {
             opacity: 1,
         },
-        "&[data-active='true']::after": {
+        "&[data-active='true']::after,,&[data-current=true]::after": {
             opacity: 1,
             height: 40,
             top: 5,

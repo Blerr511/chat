@@ -13,6 +13,8 @@ import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { Collapse } from "@material-ui/core";
+import { connect } from "react-redux";
+import { _clearAuthMessages, _signUp } from "../actions/auth.action";
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -46,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignUp = ({ signUp, error, message, loading, clear }) => {
+const SignUp = ({ signUp, error, message, clear }) => {
     const classes = useStyles();
     const history = useHistory();
     const $firstName = useRef();
@@ -209,4 +211,15 @@ const SignUp = ({ signUp, error, message, loading, clear }) => {
     );
 };
 
-export default SignUp;
+const mapStateToProps = state => {
+	const auth = state.auth;
+	const error = auth.get('error');
+	const message = auth.get('message');
+	return {error, message};
+};
+const mapDispatchToProps = {
+	signUp: _signUp,
+	clear: _clearAuthMessages
+};
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+
