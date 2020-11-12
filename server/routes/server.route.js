@@ -1,17 +1,18 @@
-const { Server } = require('../mongodb/schemas/server.schema');
-const catchHelper = require('../helpers/catch.helper');
-const { Room } = require('../mongodb/schemas/room.schema');
-const { getSocketByUserId } = require('../helpers/socket.helper');
-const { io } = require('../helpers/createServer.helper');
-const { d_SOCKET_NEW_MEMBER } = require('../constants/socketEvents.constant');
-const s3 = require('../helpers/aws/S3');
-const permissionMiddleware = require('../middleware/permission.middleware');
-const { Member } = require('../mongodb/schemas/member.schema');
-const { newRoomCreated } = require('../helpers/actions/newRoom.action');
-const { Token } = require('../mongodb/schemas/token.schema');
-const { newMemberAction } = require('../helpers/actions/newMember.action');
-
 const router = require('express').Router();
+
+const s3 = require('../helpers/aws/S3');
+const catchHelper = require('../helpers/catch.helper');
+const { io } = require('../helpers/createServer.helper');
+const { Room } = require('../mongodb/schemas/room.schema');
+const { Token } = require('../mongodb/schemas/token.schema');
+const { Server } = require('../mongodb/schemas/server.schema');
+const { Member } = require('../mongodb/schemas/member.schema');
+const { getSocketByUserId } = require('../helpers/socket.helper');
+const { newRoomCreated } = require('../helpers/actions/newRoom.action');
+const { newMemberAction } = require('../helpers/actions/newMember.action');
+const permissionMiddleware = require('../middleware/permission.middleware');
+const { d_SOCKET_NEW_MEMBER } = require('../constants/socketEvents.constant');
+
 /**
  * Handle get server request
  * @type {import("express").RequestHandler}
