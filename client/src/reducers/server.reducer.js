@@ -29,10 +29,7 @@ const server = (state = initialState, {type, payload}) => {
 		case GET_SERVERS_SUCCESS:
 			return state.withMutations(mutable => {
 				mutable.set('loading', false);
-				mutable.set(
-					'list',
-					fromJS(payload.data).map(el => el.set('activeRoom', 0))
-				);
+				mutable.set('list', fromJS(payload.data));
 				return mutable;
 			});
 		case GET_SERVERS_FAILURE:

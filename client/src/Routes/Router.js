@@ -10,9 +10,7 @@ import LoadingScreen from '../components/Loading/LoadingScreen';
 import authSelector from '../selectors/auth.selector';
 import {useSelector} from 'react-redux';
 
-const GoToMain = () => (
-	<Redirect to={{pathname: controller.channels.link({serverId: '@me'})}} />
-);
+const GoToMain = () => <Redirect to={{pathname: controller.myPage.link()}} />;
 const SignIn = lazy(() => import('./Auth'));
 const SignUp = lazy(() => import('./SignUp'));
 //FIXME - add loading

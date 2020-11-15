@@ -1,6 +1,3 @@
-import initSocket, {auth} from './socket.io';
-import {LOGIN_SUCCESS} from '../actions/auth.action';
-import {_getMyRooms} from '../actions/room.action';
 import {isValid} from '../actions/socket.action';
 import socket from './socket.io';
 
@@ -52,14 +49,6 @@ const initSocketEvents = (socket, store) => {
 		} else if (process.env.NODE_ENV === 'development')
 			console.error('invalid action found ,', error);
 	});
-	// store.subscribe(console.log);
-	// socket.on("message", (payload) => {
-	//     store.dispatch({ type: SOCKET_MESSAGE_RECEIVED, payload });
-	// });
-	// socket.on("newRoom", (payload) => {
-	//     store.dispatch({ type: SOCKET_NEW_ROOM, payload });
-	//     store.dispatch(_getMyRooms());
-	// });
 };
 
 export default createSocketIoMiddleware;

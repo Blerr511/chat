@@ -12,7 +12,7 @@ import {SOCKET_AUTH_SUCCESS} from '../actions/socket.action';
 const initialState = Map({
 	loggedIn: null,
 	user: null,
-	loading: false,
+	loading: true,
 	error: null,
 	message: null,
 	socketConnected: false

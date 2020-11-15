@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,7 +10,6 @@ import {Button, IconButton, Tooltip} from '@material-ui/core';
 import {selectActiveRoom} from '../../actions/room.action';
 import {useDispatch, useSelector} from 'react-redux';
 import {Add} from '@material-ui/icons';
-import Drawer from './Drawer';
 const useStyles = makeStyles(theme => {
 	return {
 		root: {
@@ -54,29 +53,13 @@ export default function UserList({
 	searchUsers,
 	getMyRooms
 }) {
-	const [showSearchUser, setShowSearchUser] = useState(false);
 	const classes = useStyles();
 	const dispatch = useDispatch();
 	const currentActive = useSelector(state =>
 		state.rooms.get('currentActive')
 	);
-	const handleOnAddUserClick = () => setShowSearchUser(v => !v);
-	const handleOnClose = users => {
-		setShowSearchUser(false);
-		if (users?.size > 0) {
-			getMyRooms(users.map(el => el.get('username')).join(','));
-		}
-	};
-	const handleOnOpen = () => setShowSearchUser(true);
 	return (
 		<>
-			{/* <Drawer
-                open={showSearchUser}
-                onOpen={handleOnOpen}
-                onClose={handleOnClose}
-                searchUsers={searchUsers}
-                users={users}
-            /> */}
 			<List className={classes.root}>
 				{rooms.size === 0 && (
 					<ListItem alignItems="flex-start">
@@ -88,9 +71,7 @@ export default function UserList({
 				{
 					<ListItem alignItems="flex-start">
 						<Tooltip title="Add user" placement="right">
-							<IconButton
-								onClick={handleOnAddUserClick}
-								color="primary">
+							<IconButton color="primary">
 								<Add />
 							</IconButton>
 						</Tooltip>

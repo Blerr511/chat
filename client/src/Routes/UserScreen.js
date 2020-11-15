@@ -18,10 +18,10 @@ import {
 	getServers,
 	createServer,
 	clearServerMessages,
-	createNewServerRoom,
-	serverSetActiveChannel
+	createNewServerRoom
 } from '../actions/server.action';
-import {Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
+import controller from './controller';
 
 const styles = makeStyles(theme => ({
 	container: {
@@ -60,11 +60,9 @@ const UserScreen = ({
 	sendSocketAction,
 	clearServerMessages,
 	createNewServerRoom,
-	searchUsersFakeLoading,
-	serverSetActiveChannel
+	searchUsersFakeLoading
 }) => {
 	const classes = styles();
-	const [activeServer, setActiveServer] = useState(null);
 	const error3 = server.get('error');
 	const myRooms = rooms.get('rooms');
 	const servers = server.get('list');
@@ -92,8 +90,7 @@ const UserScreen = ({
 		createServer(credentials.name, credentials.file);
 	};
 	const handleSendMessage = useCallback(
-		({roomId, message}) => {
-			const serverId = servers.getIn([activeServer, '_id']);
+		({serverId, roomId, message}) => {
 			sendSocketAction({
 				type: SOCKET_ACTION_TYPES.SEND_MESSAGE,
 				payload: {
@@ -103,7 +100,7 @@ const UserScreen = ({
 				}
 			});
 		},
-		[sendSocketAction, servers, activeServer]
+		[sendSocketAction, servers]
 	);
 	return (
 		<section className={classes.container}>
@@ -118,45 +115,65 @@ const UserScreen = ({
 			/>
 			<ServerList
 				servers={servers}
-				active={activeServer}
-				setActive={setActiveServer}
 				handleCreateClick={handleCreateClick}
 			/>
 			<Paper className={classes.paper}>
-				<div>
-					<Switch>
+				<Switch>
+					<Route
+						exact
+						path={controller.myPage.path}
+						render={() => (
+							<SideBar
+								users={users}
+								rooms={myRooms}
+								getMyRooms={getMyRooms}
+								activeRoom={activeRoom}
+								searchUsers={searchUsers}
+								loading={loading1 || loading2}
+								fakeLoading={searchUsersFakeLoading}
+							/>
+						)}
+					/>
+					{servers.size && (
 						<Route
-							path="/channels/@me"
-							render={() => (
-								<SideBar
-									users={users}
-									rooms={myRooms}
-									getMyRooms={getMyRooms}
-									activeRoom={activeRoom}
-									searchUsers={searchUsers}
-									loading={loading1 || loading2}
-									fakeLoading={searchUsersFakeLoading}
-								/>
-							)}
-						/>
-						{servers.size && (
-							<Route
-								path="/channels/:serverId"
-								render={({
-									match: {
-										params: {serverId}
-									}
-								}) => {
+							path={controller.channels.path}
+							render={({
+								match: {
+									params: {serverId, roomId}
+								}
+							}) => {
+								const serverIndex = servers.findIndex(
+									v => v.get('_id') === serverId
+								);
+								if (serverIndex === -1)
 									return (
+										<Redirect
+											to={controller.myPage.link()}
+										/>
+									);
+								const server = servers.get(serverIndex);
+								const roomIndex = server
+									.get('rooms')
+									.findIndex(v => v.get('_id') === roomId);
+								if (roomIndex === -1)
+									return (
+										<Redirect
+											to={controller.channels.link({
+												serverId: server.get('_id'),
+												roomId: server.getIn([
+													'rooms',
+													0,
+													'_id'
+												])
+											})}
+										/>
+									);
+								const room = server.getIn(['rooms', roomIndex]);
+								return (
+									<>
 										<ServerSideBar
 											myUser={user}
-											server={servers.get(
-												servers.findIndex(
-													v =>
-														v.get('_id') ===
-														serverId
-												)
-											)}
+											server={server}
 											error={servers.get('error')}
 											message={servers.get('message')}
 											loading={servers.get('loading')}
@@ -164,28 +181,19 @@ const UserScreen = ({
 											clearServerMessages={
 												clearServerMessages
 											}
-											setSelectedTextChannel={
-												serverSetActiveChannel
-											}
 										/>
-									);
-								}}
-							/>
-						)}
-					</Switch>
-				</div>
-				<div style={{flex: 4}}>
-					{typeof activeServer === 'number' && (
-						<MessageBar
-							handleSend={handleSendMessage}
-							room={servers.getIn([
-								activeServer,
-								'rooms',
-								servers.getIn([activeServer, 'activeRoom'])
-							])}
+										<div style={{flex: 4}}>
+											<MessageBar
+												handleSend={handleSendMessage}
+												room={room}
+											/>
+										</div>
+									</>
+								);
+							}}
 						/>
 					)}
-				</div>
+				</Switch>
 			</Paper>
 		</section>
 	);
@@ -207,7 +215,6 @@ const mapDispatchToProps = {
 	getRoles: _getRoles,
 	createNewServerRoom,
 	searchUsersFakeLoading,
-	serverSetActiveChannel,
 	getMyRooms: _getMyRooms
 };
 

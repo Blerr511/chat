@@ -1,13 +1,26 @@
-import React from 'react';
 import {useSelector} from 'react-redux';
+import {useRouteMatch} from 'react-router-dom';
+import authSelector from '../selectors/auth.selector';
+import serverSelector from '../selectors/server.selector';
 
-const usePermissions = role => {
-	const roles = useSelector(state => state.permissions);
-	const [, myRole] = roles.get('data').findEntry(v => v.get('name') === role);
+const usePermissions = () => {
+	const match = useRouteMatch();
+	const myRoles = useSelector(state => {
+		const userId = authSelector.user(state).get('_id');
+		if (!match?.params?.serverId) return null;
+		const serverId = match.params.serverId;
+		const server = serverSelector.server(serverId)(state);
+		if (!server) return null;
+		const memberIndex = server
+			.get('members')
+			.findIndex(v => v.getIn(['user', '_id']) === userId);
+		if (memberIndex === -1) return null;
+		return server.getIn(['members', memberIndex, 'role']);
+	});
 	const check = permission => {
-		if (!myRole) return false;
-		if (myRole.get('name') === 'admin') return true;
-		return myRole.get('permissions').includes(permission);
+		if (!myRoles) return false;
+		if (myRoles.get('name') === 'admin') return true;
+		return myRoles.get('permissions').includes(permission);
 	};
 	return check;
 };

@@ -16,6 +16,7 @@ export default {
 	main: new Path('/'),
 	login: new Path('/login'),
 	signup: new Path('/signup'),
-	channels: new Path('/channels/:serverId?'),
+	myPage: new Path('/channels/@me'),
+	channels: new Path('/channels/:serverId/:roomId?'),
 	invite: new Path('/invite/:token')
 };

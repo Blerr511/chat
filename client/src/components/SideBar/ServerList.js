@@ -12,8 +12,10 @@ import {List} from 'immutable';
 import {Add, Forum} from '@material-ui/icons';
 import {HoverSquare} from '../StyledComponents/HoverSquare.group';
 import {Styled} from '../StyledComponents/Styled.group';
-import {NavLink, useHistory} from 'react-router-dom';
+import {NavLink, useHistory, useRouteMatch} from 'react-router-dom';
 import controller from '../../Routes/controller';
+import lastTextChannel from '../../storage/servers/lastTextChannel';
+import SideBarNavLink from '../Room/Servers/SideBarNavLink';
 
 const styles = makeStyles(theme => ({
 	container: {
@@ -69,7 +71,7 @@ const ServerList = ({servers = List(), handleCreateClick}) => {
 			<div className={classes.contDiv}>
 				<ListItemAvatar className={classes.avatarContainer}>
 					<NavLink
-						to={controller.channels.link({serverId: '@me'})}
+						to={controller.myPage.link()}
 						aria-current={'true'}
 						component={props => (
 							<HoverSquare.IconButton
@@ -91,42 +93,7 @@ const ServerList = ({servers = List(), handleCreateClick}) => {
 						<ListItemAvatar
 							key={el.get('_id')}
 							className={classes.avatarContainer}>
-							<NavLink
-								to={controller.channels.link({
-									serverId: el.get('_id')
-								})}
-								aria-current={'true'}
-								component={props => (
-									<IconButton style={{padding: 0}}>
-										<Styled.ToolTip
-											title={el.get('name')}
-											placement="right"
-											arrow>
-											<HoverSquare.Avatar
-												onClick={props.navigate}
-												data-active={
-													props['aria-current'] ===
-													'true'
-												}
-												alt={el.get('name')}
-												src={el.get('icon')}
-												defaultChecked
-												style={{
-													fontSize: `${
-														el.get('name').length >
-														10
-															? 10
-															: 20 -
-															  el.get('name')
-																	.length
-													}px`
-												}}>
-												{!el.get('icon') &&
-													el.get('name').slice(0, 7)}
-											</HoverSquare.Avatar>
-										</Styled.ToolTip>
-									</IconButton>
-								)}></NavLink>
+							<SideBarNavLink server={el} />
 						</ListItemAvatar>
 					);
 				})}

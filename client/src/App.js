@@ -7,14 +7,15 @@ import Router from './Routes/Router';
 import {_login} from './actions/auth.action';
 
 import './App.css';
+import authSelector from './selectors/auth.selector';
 
 export const ThemeController = createContext();
 
-const App = ({login}) => {
+const App = ({login, loggedIn}) => {
 	const [theme, setTheme] = useState('dark');
 
 	useEffect(() => {
-		login();
+		if (!loggedIn) login();
 	}, [login]);
 	return (
 		<ThemeController.Provider value={[theme, setTheme]}>
@@ -25,5 +26,6 @@ const App = ({login}) => {
 	);
 };
 
+const mapStateToProps = state => ({loggedIn: authSelector.loggedIn(state)});
 const mapDispatchToProps = {login: _login};
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

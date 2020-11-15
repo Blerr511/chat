@@ -1,29 +1,27 @@
+import React, {useState} from 'react';
+import Add from '@material-ui/icons/Add';
+import Paper from '@material-ui/core/Paper';
 import {makeStyles} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Add from '@material-ui/icons/Add';
 import ChevronRight from '@material-ui/icons/ChevronRight';
-import React, {useEffect, useState} from 'react';
-import usePermissions from '../../hooks/usePermissions.hook';
-import useStorageState from '../../hooks/useStorageState.hook';
-import AddPersonIcon from '../../svg/AddPerson.icon';
-import HashIcon from '../../svg/Hash.icon';
-import SettingsIcon from '../../svg/Settings.icon';
+
 import XIcon from '../../svg/X.icon';
-import DialogCreateInvite from '../Dialog/DialogCreateInvite';
+import ChannelLink from '../Room/Channels/ChannelLink';
 import DialogCreateRoom from '../Dialog/DialogCreateRoom';
-import {Styled} from '../StyledComponents/Styled.group';
+import usePermissions from '../../hooks/usePermissions.hook';
+import DialogCreateInvite from '../Dialog/DialogCreateInvite';
+import useStorageState from '../../hooks/useStorageState.hook';
 
 const useStyles = makeStyles(theme => ({
 	paper: {
 		width: 240,
-		overflow: 'hidden',
+		height: '100%',
 		display: 'flex',
-		flexDirection: 'column',
 		borderRadius: 0,
-		backgroundColor: theme.palette.background.secondary,
-		height: '100%'
+		overflow: 'hidden',
+		flexDirection: 'column',
+		backgroundColor: theme.palette.background.secondary
 	},
 	header: {
 		display: 'flex',
@@ -93,24 +91,7 @@ const useStyles = makeStyles(theme => ({
 			color: theme.palette.text.interactiveHover
 		}
 	},
-	roomTitle: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		marginLeft: theme.spacing(1),
-		width: `calc(100% - ${theme.spacing(1)}px)`,
-		fontSize: theme.typography.pxToRem(12),
-		paddingLeft: theme.spacing(1),
-		color: theme.palette.text.channelsDefault,
-		marginBottom: '2px',
-		'&[data-active=true]': {
-			backgroundColor: theme.palette.background.modifierSelected,
-			color: theme.palette.text.interactiveActive
-		},
-		'&[data-active=false]:hover': {
-			backgroundColor: theme.palette.background.modifierHover,
-			color: theme.palette.text.interactiveHover
-		}
-	},
+
 	headerContainer: {
 		display: 'flex',
 		position: 'relative',
@@ -167,21 +148,6 @@ const useStyles = makeStyles(theme => ({
 		'&:hover': {
 			color: theme.palette.text.interactiveHover
 		}
-	},
-	iconHash: {
-		width: theme.shape.iconSmaller,
-		height: theme.shape.iconSmaller,
-		color: theme.palette.text.muted,
-		marginRight: '6px'
-	},
-	actionContainer: {
-		display: 'flex'
-	},
-	actionIcon: {
-		color: theme.palette.text.interactiveNormal,
-		'&:hover': {
-			color: theme.palette.text.interactiveHover
-		}
 	}
 }));
 
@@ -192,14 +158,12 @@ const ServerSideBar = ({
 	message,
 	loading,
 	clearServerMessages,
-	createNewRoom,
-	setSelectedTextChannel
+	createNewRoom
 }) => {
 	const name = server.get('name'),
 		rooms = server.get('rooms'),
 		members = server.get('members'),
-		id = server.get('_id'),
-		selectedTextChannel = server.get('activeRoom');
+		id = server.get('_id');
 	const classes = useStyles();
 	const [textChannelExpanded, setTextChannelExpanded] = useStorageState(
 		`app.server_${id}.textChannelCollapsed`,
@@ -231,9 +195,6 @@ const ServerSideBar = ({
 		handleCloseDialog();
 	};
 
-	useEffect(() => {
-		setSelectedTextChannel({serverId: id, index: 0});
-	}, [id, setSelectedTextChannel]);
 	return (
 		<>
 			<DialogCreateRoom
@@ -303,127 +264,18 @@ const ServerSideBar = ({
 						</div>
 					</div>
 
-					{rooms && textChannelExpanded ? (
-						rooms.map((el, i) => {
+					{rooms &&
+						rooms.map(el => {
 							return (
-								<div key={el.get('_id')}>
-									<Button
-										variant="text"
-										className={classes.roomTitle}
-										data-active={selectedTextChannel === i}
-										onClick={() =>
-											setSelectedTextChannel({
-												serverId: id,
-												index: i
-											})
-										}>
-										<span
-											style={{
-												display: 'flex',
-												alignItems: 'center'
-											}}>
-											<HashIcon
-												className={classes.iconHash}
-											/>{' '}
-											<Typography
-												style={{
-													textTransform: 'none',
-													lineHeight: 1
-												}}>
-												{el.get('name')}
-											</Typography>
-										</span>
-										{checkPermissions('editRoom') &&
-											selectedTextChannel === i && (
-												<div
-													className={
-														classes.actionContainer
-													}>
-													<Styled.ToolTip
-														title={'Create Invite'}
-														placement="top"
-														arrow>
-														<AddPersonIcon
-															className={
-																classes.actionIcon
-															}
-														/>
-													</Styled.ToolTip>
-													<Styled.ToolTip
-														title={'Edit channel'}
-														placement="top"
-														arrow>
-														<SettingsIcon
-															style={{
-																marginLeft:
-																	'4px'
-															}}
-															className={
-																classes.actionIcon
-															}
-														/>
-													</Styled.ToolTip>
-												</div>
-											)}
-									</Button>
-								</div>
+								<ChannelLink
+									key={el.get('_id')}
+									name={el.get('name')}
+									roomId={el.get('_id')}
+									textChannelExpanded={textChannelExpanded}
+									serverId={id}
+								/>
 							);
-						})
-					) : (
-						<div key={rooms.getIn([selectedTextChannel, '_id'])}>
-							<Button
-								variant="text"
-								className={classes.roomTitle}
-								data-active={true}
-								onClick={() =>
-									setSelectedTextChannel({
-										serverId: id,
-										index: selectedTextChannel
-									})
-								}>
-								<span
-									style={{
-										display: 'flex',
-										alignItems: 'center'
-									}}>
-									<HashIcon className={classes.iconHash} />{' '}
-									<Typography
-										style={{
-											textTransform: 'none',
-											lineHeight: 1
-										}}>
-										{rooms.getIn([
-											selectedTextChannel,
-											'name'
-										])}
-									</Typography>
-								</span>
-								{checkPermissions('editRoom') && (
-									<div className={classes.actionContainer}>
-										<Styled.ToolTip
-											title={'Create Invite'}
-											placement="top"
-											arrow>
-											<AddPersonIcon
-												className={classes.actionIcon}
-											/>
-										</Styled.ToolTip>
-										<Styled.ToolTip
-											title={'Edit channel'}
-											placement="top"
-											arrow>
-											<SettingsIcon
-												style={{
-													marginLeft: '4px'
-												}}
-												className={classes.actionIcon}
-											/>
-										</Styled.ToolTip>
-									</div>
-								)}
-							</Button>
-						</div>
-					)}
+						})}
 				</div>
 			</nav>
 		</>
