@@ -25,4 +25,5 @@ const App = ({login}) => {
 	);
 };
 
-export default connect(null, {login: _login})(App);
+const mapDispatchToProps = {login: _login};
+export default connect(null, mapDispatchToProps)(App);
