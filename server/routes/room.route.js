@@ -13,31 +13,31 @@ const { d_SOCKET_NEW_ROOM } = require("../constants/socketEvents.constant");
  * @return {Promise<void>}
  */
 const handleGetRooms = async (req, res, next) => {
-    try {
-        const { members } = req.query;
-        const { user } = req;
-        let room = null;
-        if (members) {
-            room = await Room.getRoom(members.split(","), user);
-            room.members.map((user) => {
-                if (user.socketId) {
-                    io.sockets.connected[user.socketId].join(room._id);
-                    io.sockets.connected[user.socketId].emit(d_SOCKET_NEW_ROOM);
-                }
-            });
-        } else room = await Room.getRoomsOfUser(user);
+  try {
+    const { members } = req.query;
+    const { user } = req;
+    let room = null;
+    if (members) {
+      room = await Room.getRoom(members.split(","), user);
+      room.members.map((user) => {
+        if (user.socketId) {
+          io.sockets.connected[user.socketId].join(room._id);
+          io.sockets.connected[user.socketId].emit(d_SOCKET_NEW_ROOM);
+        }
+      });
+    } else room = await Room.getRoomsOfUser(user);
 
-        req.response = {
-            code: 200,
-            status: "success",
-            message: "Success",
-            data: room,
-        };
-    } catch (error) {
-        catchHelper(req, error);
-    }
+    req.response = {
+      code: 200,
+      status: "success",
+      message: "Success",
+      data: room,
+    };
+  } catch (error) {
+    catchHelper(req, error);
+  }
 
-    next();
+  next();
 };
 
 router.get("/", handleGetRooms);

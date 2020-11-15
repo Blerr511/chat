@@ -12,40 +12,40 @@ const catchHelper = require("../helpers/catch.helper");
  * @return {Promise<void>}
  */
 const handleSearch = async (req, res, next) => {
-    try {
-        const { search, page = 0, limit = 500 } = req.query;
-        if (search === "") throw new Error(userErrors.no_users);
-        const users = await User.find(
-            search
-                ? {
-                      $and: [
-                          {
-                              $or: [
-                                  { username: { $regex: search } },
-                                  { email: { $regex: search } },
-                              ],
-                          },
-                          {
-                              _id: { $ne: req.user._id },
-                          },
-                      ],
-                  }
-                : {}
-        )
-            .skip(+limit * +page)
-            .limit(+limit)
-            .lean();
-        if (!users || users.length === 0) throw new Error(userErrors.no_users);
-        req.response = {
-            code: 200,
-            status: "success",
-            message: "users found",
-            data: users,
-        };
-    } catch (error) {
-        catchHelper(req, error);
-    }
-    next();
+  try {
+    const { search, page = 0, limit = 500 } = req.query;
+    if (search === "") throw new Error(userErrors.no_users);
+    const users = await User.find(
+      search
+        ? {
+            $and: [
+              {
+                $or: [
+                  { username: { $regex: search } },
+                  { email: { $regex: search } },
+                ],
+              },
+              {
+                _id: { $ne: req.user._id },
+              },
+            ],
+          }
+        : {}
+    )
+      .skip(+limit * +page)
+      .limit(+limit)
+      .lean();
+    if (!users || users.length === 0) throw new Error(userErrors.no_users);
+    req.response = {
+      code: 200,
+      status: "success",
+      message: "users found",
+      data: users,
+    };
+  } catch (error) {
+    catchHelper(req, error);
+  }
+  next();
 };
 
 router.get("/", handleSearch);

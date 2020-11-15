@@ -19,7 +19,7 @@ export const auth = jwtToken =>
 		const handleError = (...argv) => {
 			rej(...argv);
 			socket.removeEventListener('error', handleError);
-        };
+		};
 		socket.addEventListener('error', handleError);
 	});
 export default socket;

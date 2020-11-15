@@ -51,8 +51,8 @@ export const _login = (username, password) => dispatch => {
 	dispatch(request());
 	return auth(username, password).then(
 		async data => {
-            await dispatch(socketAuthAction(data.token));
-            dispatch(success(data));
+			await dispatch(socketAuthAction(data.token));
+			dispatch(success(data));
 		},
 		error => dispatch(failure(error))
 	);

@@ -66,7 +66,6 @@ export const isValid = action => {
 };
 
 export const socketAuthAction = token => (dispatch, getState) => {
-
 	const request = payload => {
 		return dispatch({type: SOCKET_AUTH_REQUEST, payload});
 	};

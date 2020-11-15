@@ -1,3 +1,3 @@
 module.exports.roomMessages = {
-    room_created: "Room success created",
+  room_created: "Room success created",
 };

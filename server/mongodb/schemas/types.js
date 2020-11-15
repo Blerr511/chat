@@ -7,15 +7,15 @@
  * @property {Number} [socketId]
  */
 
- /**
-  * @typedef {Object} Message
-  * @property {String} data
-  * @property {User} sender
-  */
+/**
+ * @typedef {Object} Message
+ * @property {String} data
+ * @property {User} sender
+ */
 
-  /**
-   * @typedef {Object} Room
-   * @property {Array.<User>} members
-   * @property {Array.<User>} admins
-   * @property {Array.<Message>} messages
-   */
+/**
+ * @typedef {Object} Room
+ * @property {Array.<User>} members
+ * @property {Array.<User>} admins
+ * @property {Array.<Message>} messages
+ */

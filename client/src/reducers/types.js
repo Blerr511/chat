@@ -28,16 +28,16 @@
  * @property {Array.<User>} members
  */
 
- /**
-  * @typedef {Object} User
-  * @property {String} _id - objectId of user
-  * @property {String} username
-  * @property {String} email
-  * @property {Boolean} online
-  */
+/**
+ * @typedef {Object} User
+ * @property {String} _id - objectId of user
+ * @property {String} username
+ * @property {String} email
+ * @property {Boolean} online
+ */
 
-  /**
-   * @typedef {Object} Message
-   * @property {String} data
-   * @property {User} sender
-   */
+/**
+ * @typedef {Object} Message
+ * @property {String} data
+ * @property {User} sender
+ */

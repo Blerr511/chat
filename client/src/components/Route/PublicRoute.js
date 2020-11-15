@@ -1,7 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import controller from '../../Routes/controller';
-import { Redirect, Route } from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 
 /**
  * This route will be visible only for 💥NOT💥 logged in users , otherwise user will be redirected to main or ```redirectTo``` page
@@ -29,4 +29,4 @@ const PublicRoute = ({component: Component, ...rest}) => {
 	);
 };
 
-export default PublicRoute
+export default PublicRoute;
