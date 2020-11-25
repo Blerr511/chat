@@ -9,9 +9,11 @@ import ChevronRight from '@material-ui/icons/ChevronRight';
 import XIcon from '../../svg/X.icon';
 import ChannelLink from '../Room/Channels/ChannelLink';
 import DialogCreateRoom from '../Dialog/DialogCreateRoom';
-import usePermissions from '../../hooks/usePermissions.hook';
 import DialogCreateInvite from '../Dialog/DialogCreateInvite';
 import useStorageState from '../../hooks/useStorageState.hook';
+import usePermissionControl from '../../hooks/usePermissionControl';
+import {d_ROLE_CREATE_ROOM} from '../../config/roles';
+import ServerContext from './ServerContext';
 
 const useStyles = makeStyles(theme => ({
 	paper: {
@@ -150,7 +152,6 @@ const useStyles = makeStyles(theme => ({
 		}
 	}
 }));
-
 const ServerSideBar = ({
 	server,
 	myUser,
@@ -189,14 +190,15 @@ const ServerSideBar = ({
 	const [, myMember] = members.findEntry(
 		v => v.getIn(['user', '_id']) === myUser?.get('_id')
 	);
-	const checkPermissions = usePermissions(myMember?.getIn(['role', 'name']));
+	const myRoleJs = myMember.get('role').toJS();
+	const WithPermission = usePermissionControl(myRoleJs);
 	const handleSubmitNewRoom = ({name, type}) => {
 		if (type === 'text') createNewRoom(id, {name});
 		handleCloseDialog();
 	};
-
 	return (
-		<>
+		<ServerContext.Provider
+			value={{role: myRoleJs, serverId: id}}>
 			<DialogCreateRoom
 				error={error}
 				handleOnClose={handleCloseDialog}
@@ -254,13 +256,13 @@ const ServerSideBar = ({
 								/>
 								Text channels
 							</Typography>
-							{checkPermissions('createRoom') && (
+							<WithPermission permission={d_ROLE_CREATE_ROOM}>
 								<Typography
 									onClick={handleOpenDialog}
 									className={classes.newRoomIcon}>
 									<Add />
 								</Typography>
-							)}
+							</WithPermission>
 						</div>
 					</div>
 
@@ -278,7 +280,7 @@ const ServerSideBar = ({
 						})}
 				</div>
 			</nav>
-		</>
+		</ServerContext.Provider>
 	);
 };
 

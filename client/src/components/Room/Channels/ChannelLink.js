@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Button, makeStyles, Typography} from '@material-ui/core';
 import {NavLink} from 'react-router-dom';
 
@@ -7,8 +7,10 @@ import controller from '../../../Routes/controller';
 import SettingsIcon from '../../../svg/Settings.icon';
 import AddPersonIcon from '../../../svg/AddPerson.icon';
 import {Styled} from '../../StyledComponents/Styled.group';
-import usePermissions from '../../../hooks/usePermissions.hook';
 import lastTextChannel from '../../../storage/servers/lastTextChannel';
+import ServerContext from '../../ServerSideBar/ServerContext';
+import usePermissionControl from '../../../hooks/usePermissionControl';
+import {d_ROLE_EDIT_ROOM} from '../../../config/roles';
 
 const useStyles = makeStyles(theme => ({
 	roomTitle: {
@@ -46,9 +48,10 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const ChannelLink = ({roomId, serverId, textChannelExpanded, name}) => {
+const ChannelLink = ({roomId, textChannelExpanded, name}) => {
 	const classes = useStyles();
-	const checkPermissions = usePermissions();
+	const {role, serverId} = useContext(ServerContext);
+	const WithPermission = usePermissionControl(role);
 	return (
 		<NavLink
 			to={controller.channels.link({
@@ -82,28 +85,30 @@ const ChannelLink = ({roomId, serverId, textChannelExpanded, name}) => {
 								{name}
 							</Typography>
 						</span>
-						{checkPermissions('editRoom') && isActive && (
-							<div className={classes.actionContainer}>
-								<Styled.ToolTip
-									title={'Create Invite'}
-									placement="top"
-									arrow>
-									<AddPersonIcon
-										className={classes.actionIcon}
-									/>
-								</Styled.ToolTip>
-								<Styled.ToolTip
-									title={'Edit channel'}
-									placement="top"
-									arrow>
-									<SettingsIcon
-										style={{
-											marginLeft: '4px'
-										}}
-										className={classes.actionIcon}
-									/>
-								</Styled.ToolTip>
-							</div>
+						{isActive && (
+							<WithPermission permission={d_ROLE_EDIT_ROOM}>
+								<div className={classes.actionContainer}>
+									<Styled.ToolTip
+										title={'Create Invite'}
+										placement="top"
+										arrow>
+										<AddPersonIcon
+											className={classes.actionIcon}
+										/>
+									</Styled.ToolTip>
+									<Styled.ToolTip
+										title={'Edit channel'}
+										placement="top"
+										arrow>
+										<SettingsIcon
+											style={{
+												marginLeft: '4px'
+											}}
+											className={classes.actionIcon}
+										/>
+									</Styled.ToolTip>
+								</div>
+							</WithPermission>
 						)}
 					</Button>
 				);
