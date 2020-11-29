@@ -15,7 +15,7 @@ const App = ({login, loggedIn}) => {
 	const [theme, setTheme] = useState('dark');
 
 	useEffect(() => {
-		if (!loggedIn) login();
+		login();
 	}, [login]);
 	return (
 		<ThemeController.Provider value={[theme, setTheme]}>

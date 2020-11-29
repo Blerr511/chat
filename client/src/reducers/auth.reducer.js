@@ -21,10 +21,7 @@ const initialState = Map({
 const auth = (state = initialState, {type, payload}) => {
 	switch (type) {
 		case LOGIN_REQUEST:
-			return state
-				.set('loading', true)
-				.set('message', null)
-				.set('error', null);
+			return state.set('message', null).set('error', null);
 		case LOGIN_SUCCESS:
 			return state.withMutations(mutable => {
 				mutable.set('loading', false);

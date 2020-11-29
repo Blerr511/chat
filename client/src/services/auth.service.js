@@ -7,15 +7,17 @@ export const auth = async (username, password) => {
 	 * @type {RequestInit}
 	 */
 	const requestInit = {
-		headers: {...authHeader()}
-	};
-	const data = await fetch(
-		jsonToQueryParams(process.env.REACT_APP_LOGIN, {
+		method: 'POST',
+		headers: {
+			...authHeader(),
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
 			username,
 			password
-		}),
-		requestInit
-	)
+		})
+	};
+	const data = await fetch(process.env.REACT_APP_LOGIN, requestInit)
 		.then(handleResponse)
 		.then(data => {
 			localStorage.setItem('token', data.data?.token);
