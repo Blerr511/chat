@@ -1,5 +1,4 @@
 const { sign, verify } = require("jsonwebtoken");
-const catchHelper = require("../helpers/catch.helper");
 const { Server } = require("../mongodb/schemas/server.schema");
 const { Token } = require("../mongodb/schemas/token.schema");
 
@@ -36,10 +35,10 @@ const generateToken = async (req, res, next) => {
       message: "Token success generated",
       data: key,
     };
+    next();
   } catch (error) {
-    catchHelper(req, error);
+    next(error);
   }
-  next();
 };
 /**
  * @type {import("express").RequestHandler}
@@ -65,8 +64,7 @@ const checkToken = async (req, res, next) => {
       next();
     });
   } catch (error) {
-    catchHelper(req, error);
-    next();
+    next(error);
   }
 };
 
