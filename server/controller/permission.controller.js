@@ -1,4 +1,4 @@
-const { Role } = require('../mongodb/schemas/role.schema');
+const { Role } = require('../db/schemas/role.schema');
 
 /**
  * @type {import("express").RequestHandler}

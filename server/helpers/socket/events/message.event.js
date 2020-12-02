@@ -2,7 +2,6 @@ const MessageFiledError = require('../../../errors/db/MessageFiled.error');
 const NotFoundError = require('../../../errors/db/NotFound.error');
 const AuthFailedError = require('../../../errors/socket/AuthFailed.error');
 const InvalidDataError = require('../../../errors/socket/InvalidData.error');
-const socketError = require('../../../messages/error/socket.error');
 const { Room } = require('../../../mongodb/schemas/room.schema');
 
 /**

@@ -1,4 +1,4 @@
-const { Room } = require('../mongodb/schemas/room.schema');
+const { Room } = require('../db/schemas/room.schema');
 const { io } = require('../helpers/createServer.helper');
 const { d_SOCKET_NEW_ROOM } = require('../constants/socketEvents.constant');
 

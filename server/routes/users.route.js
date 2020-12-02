@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const User = require('../mongodb/schemas/user.schema');
+const User = require('../db/schemas/user.schema');
 const { userErrors } = require('../messages/error/mongoose.error');
 
 /**

@@ -4,8 +4,8 @@ const AuthFailedError = require('../../../errors/socket/AuthFailed.error');
 const {
     d_SOCKET_AUTHENTICATED,
 } = require('../../../constants/socketEvents.constant');
-const User = require('../../../mongodb/schemas/user.schema');
-const { Room } = require('../../../mongodb/schemas/room.schema');
+const User = require('../../../db/schemas/user.schema');
+const { Room } = require('../../../db/schemas/room.schema');
 const { verify } = require('jsonwebtoken');
 
 if (process.env.NODE_ENV === 'development') require('colors');

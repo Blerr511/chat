@@ -1,4 +1,4 @@
-const { Server } = require("../mongodb/schemas/server.schema");
+const { Server } = require("../db/schemas/server.schema");
 
 /**
  * Checking permission for member

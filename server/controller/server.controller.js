@@ -1,8 +1,8 @@
 const { io } = require('../helpers/createServer.helper');
-const { Room } = require('../mongodb/schemas/room.schema');
-const { Token } = require('../mongodb/schemas/token.schema');
-const { Server } = require('../mongodb/schemas/server.schema');
-const { Member } = require('../mongodb/schemas/member.schema');
+const { Room } = require('../db/schemas/room.schema');
+const { Token } = require('../db/schemas/token.schema');
+const { Server } = require('../db/schemas/server.schema');
+const { Member } = require('../db/schemas/member.schema');
 const { getSocketByUserId } = require('../helpers/socket.helper');
 const { newRoomCreated } = require('../helpers/actions/newRoom.action');
 const { newMemberAction } = require('../helpers/actions/newMember.action');

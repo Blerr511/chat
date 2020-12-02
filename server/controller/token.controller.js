@@ -1,6 +1,6 @@
 const { sign, verify } = require('jsonwebtoken');
-const { Server } = require('../mongodb/schemas/server.schema');
-const { Token } = require('../mongodb/schemas/token.schema');
+const { Server } = require('../db/schemas/server.schema');
+const { Token } = require('../db/schemas/token.schema');
 
 const uniqid = require('uniqid');
 /**

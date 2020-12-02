@@ -1,5 +1,5 @@
 const { sign } = require('jsonwebtoken');
-const User = require('../mongodb/schemas/user.schema');
+const User = require('../db/schemas/user.schema');
 
 const { userErrors } = require('../messages/error/mongoose.error');
 /**
