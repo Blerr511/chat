@@ -18,7 +18,7 @@ const create = async (name, serverIcon) => {
 	body.set('name', name);
 	body.set('serverIcon', serverIcon);
 	const requestInit = {
-		method: 'POST',
+		method: 'PUT',
 		headers: {...authHeader()},
 		body
 	};
