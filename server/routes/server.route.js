@@ -1,13 +1,13 @@
 const router = require('express').Router();
 
-const s3 = require('../helpers/aws/S3');
+const s3 = require('../services/aws/S3');
 
 const permissionMiddleware = require('../middleware/permission.middleware');
 const controller = require('../controller');
 
 router.get('/', controller.server.getMyServers);
 
-router.post('/', s3.upload.single('serverIcon'), controller.server.create);
+router.put('/', s3.upload.single('serverIcon'), controller.server.create);
 
 router.post('/:serverId/join', controller.server.joinServer);
 

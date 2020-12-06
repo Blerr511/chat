@@ -1,5 +1,5 @@
 const { Error } = require('mongoose');
-const { deleteFile } = require('./aws/S3');
+const { deleteFile } = require('../services/aws/S3');
 module.exports = (error, req, res, next) => {
     if (error instanceof Error.ValidationError) {
         const errors = error.errors;

@@ -2,12 +2,12 @@ const MessageFiledError = require('../../../errors/db/MessageFiled.error');
 const NotFoundError = require('../../../errors/db/NotFound.error');
 const AuthFailedError = require('../../../errors/socket/AuthFailed.error');
 const InvalidDataError = require('../../../errors/socket/InvalidData.error');
-const { socketActions } = require('../../actions/message.action');
+const { SEND_MESSAGE } = require('../../actions/constants');
 
 module.exports = (next, socket, io, { type, payload }) => {
     if (!type) return next(new InvalidDataError('Action type is required'));
     switch (type) {
-        case socketActions.SEND_MESSAGE:
+        case SEND_MESSAGE:
             socketOnMessage(next, socket, io, payload);
             break;
         default:
@@ -20,7 +20,7 @@ const socketOnMessage = async (next, socket, io, data) => {
         if (typeof data !== 'object' || !data.roomId) {
             return next(
                 new InvalidDataError(
-                    `socket action ${socketActions.SEND_MESSAGE} serverId and roomId is required`
+                    `socket action ${SEND_MESSAGE} serverId and roomId is required`
                 )
             );
         }

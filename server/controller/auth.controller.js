@@ -37,6 +37,7 @@ const signIn = async (req, res, next) => {
 const signUp = async (req, res, next) => {
     try {
         const { username, email, password, firstName, lastName } = req.body;
+        console.log(req.body);
         const requiredFields = {
             username: 'Username',
             email: 'Email',

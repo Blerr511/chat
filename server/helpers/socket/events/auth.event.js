@@ -1,4 +1,3 @@
-const { addSocketUser } = require('../../socket.helper');
 const JWTDecodeError = require('../../../errors/auth/JWTDecode.error');
 const AuthFailedError = require('../../../errors/socket/AuthFailed.error');
 const {
@@ -22,7 +21,6 @@ const authEvent = (next, socket, io, data) => {
             delete decoded.exp;
             socket.user = decoded;
         }
-        addSocketUser(socket.user._id, socket.id);
         socket.connectedAt = new Date();
         socket.emit(d_SOCKET_AUTHENTICATED);
         if (process.env.NODE_ENV === 'development')

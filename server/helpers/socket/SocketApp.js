@@ -21,9 +21,8 @@ module.exports = class SocketApp {
      * @type {Object.<string,Middleware>}
      */
     events = {};
-
-    constructor(server) {
-        this.io = io(server);
+    constructor() {
+        this.io = io();
         this.io.on('connect', (socket) => {
             this.events.connect?.call(socket);
             for (const event in this.events) {
@@ -33,9 +32,10 @@ module.exports = class SocketApp {
                 }
             }
         });
+        this.use = this.use.bind(this);
+        this.catch = this.catch.bind(this);
     }
     /**
-     *
      * @param {string} event
      * @param  {...socketHandler} handlers
      */

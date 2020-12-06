@@ -15,7 +15,7 @@ app.use(express.static('build'));
 app.use(cors({ origin: config.corsOrigin }));
 app.use(bodyParser.urlencoded({ extended: true }));
 // --------- API CALLS ----------- //
-app.use('/api/register', router.register);
+app.use('/api/register', router.register, responseMiddleware);
 // ------------------------------- //
 app.use('/api/*', authMiddleware);
 app.use('/api/room', router.room);
