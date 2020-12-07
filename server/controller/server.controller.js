@@ -21,7 +21,13 @@ const getMyServers = async (req, res, next) => {
         const servers = await Server.getMyServers(user);
 
         const socket = adapter.getByUserId(user._id);
-        socket && servers.map((s) => socket.join(s._id));
+        socket &&
+            servers.map((s) => {
+                socket.join(s._id);
+                s.rooms.map((room) => {
+                    socket.join(room._id);
+                });
+            });
 
         req.response = {
             code: 200,

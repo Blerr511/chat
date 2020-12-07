@@ -38,28 +38,29 @@ class Middleware {
     }
 
     call(...context) {
-        const handlers = this._handlers;
-        /**
-         * @param  {...function} handlers
-         */
-        function* applyMiddleware() {
-            let index = 0;
-            while (index < handlers.length) yield handlers[index++];
-        }
-
-        const gen = applyMiddleware();
-        let argv = null;
-        const next = (err) => {
-            if (err) {
-                this._catch?.call(null, err, ...context, ...argv);
-                return;
-            }
-            const ir = gen.next();
-            if (!ir.done && !err) {
-                ir.value.call(null, next, ...context, ...argv);
-            }
-        };
         return (...arg) => {
+            const handlers = this._handlers;
+
+            /**
+             * @param  {...function} handlers
+             */
+            function* applyMiddleware() {
+                let index = 0;
+                while (index < handlers.length) yield handlers[index++];
+            }
+
+            const gen = applyMiddleware();
+            let argv = null;
+            const next = (err) => {
+                if (err) {
+                    this._catch?.call(null, err, ...context, ...argv);
+                    return;
+                }
+                const ir = gen.next();
+                if (!ir.done && !err) {
+                    ir.value.call(null, next, ...context, ...argv);
+                }
+            };
             argv = arg;
             next();
         };

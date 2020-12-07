@@ -12,7 +12,7 @@ const RoomSchema = new Schema(
             default: 'Room',
         },
         messages: [{ type: MessageSchema }],
-        server: { type: SchemaTypes.ObjectId, ref: 'servers' },
+        server: { type: SchemaTypes.ObjectId, ref: 'server' },
         members: [
             {
                 type: MemberSchema,

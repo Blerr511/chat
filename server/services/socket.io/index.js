@@ -1,6 +1,7 @@
 const SocketApp = require('../../helpers/socket/SocketApp');
 const controller = require('../../helpers/socket/events/controller');
 const adapter = require('./helper/socketAdapter');
+const actionController = require('../../helpers/socket/events/actionController');
 
 const staticController = {
     auth: (next, socket) => {
@@ -8,7 +9,7 @@ const staticController = {
         next();
     },
     disconnect: (next, socket) => {
-        adapter.deleteUser(socket.user._id);
+        if (socket.user) adapter.deleteUser(socket.user._id);
         next();
     },
 };
@@ -16,7 +17,11 @@ const staticController = {
 const socketService = new SocketApp();
 socketService.use('connect', controller.connect);
 socketService.use('auth', controller.auth, staticController.auth);
-socketService.use('action', controller.action);
+socketService.use(
+    'action',
+    actionController.dataType('type'),
+    controller.action
+);
 socketService.use('disconnect', staticController.disconnect);
 
 socketService.catch(controller.catch);

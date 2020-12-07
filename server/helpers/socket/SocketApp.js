@@ -24,11 +24,11 @@ module.exports = class SocketApp {
     constructor() {
         this.io = io();
         this.io.on('connect', (socket) => {
-            this.events.connect?.call(socket);
+            this.events.connect?.call(socket, this.io);
             for (const event in this.events) {
                 if (this.events.hasOwnProperty(event)) {
                     const middleware = this.events[event];
-                    socket.on(event, middleware.call(socket, io));
+                    socket.on(event, middleware.call(socket, this.io));
                 }
             }
         });
