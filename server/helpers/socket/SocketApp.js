@@ -1,5 +1,6 @@
 const io = require('socket.io');
 const Middleware = require('../utils/Middleware');
+const Service = require('../utils/Service');
 
 /**
  * @callback socketHandler
@@ -16,12 +17,15 @@ const Middleware = require('../utils/Middleware');
  * @param {import('socket.io).Server} io
  */
 
-module.exports = class SocketApp {
+module.exports = class SocketApp extends (
+    Service
+) {
     /**
      * @type {Object.<string,Middleware>}
      */
     events = {};
     constructor() {
+        super();
         this.io = io();
         this.io.on('connect', (socket) => {
             this.events.connect?.call(socket, this.io);
@@ -56,5 +60,8 @@ module.exports = class SocketApp {
     }
     get IO() {
         return this.io;
+    }
+    start(server) {
+        this.IO.listen(server);
     }
 };
