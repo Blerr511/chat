@@ -3,10 +3,9 @@ require('colors');
 const app = require('./express');
 const io = require('./socket.io');
 const server = require('http').createServer(app);
-const { configureAwsS3 } = require('./aws/S3');
-
+const AwsS3Service = require('./aws/S3');
 const initServices = () => {
-    configureAwsS3();
+    AwsS3Service.start();
     io.IO.listen(server);
     server.listen(process.env.PORT || 8080, () => {
         console.info(
