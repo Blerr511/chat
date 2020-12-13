@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {useCallback, useEffect, useState} from 'react';
 import {makeStyles, Paper} from '@material-ui/core';
 import {connect} from 'react-redux';
@@ -22,6 +23,7 @@ import {
 } from '../actions/server.action';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import controller from './controller';
+import ServerController from '../components/ServerSideBar/ServerController';
 
 const styles = makeStyles(theme => ({
 	container: {
@@ -46,6 +48,7 @@ const styles = makeStyles(theme => ({
  * @param {getMyRooms} props.getMyRooms
  * @param {Map.<RoomsKeys,*>} props.rooms
  * @param {import("@material-ui/core").StyledComponentProps.<ClassKey>} props.classes
+ * TODO - add Prop validation
  */
 const UserScreen = ({
 	user,
@@ -169,8 +172,16 @@ const UserScreen = ({
 										/>
 									);
 								const room = server.getIn(['rooms', roomIndex]);
+								const [, myMember] = server
+									.get('members')
+									.findEntry(
+										v =>
+											v.getIn(['user', '_id']) ===
+											user?.get('_id')
+									);
 								return (
-									<>
+									<ServerController.ServerProvider
+										serverId={serverId}>
 										<ServerSideBar
 											myUser={user}
 											server={server}
@@ -182,13 +193,12 @@ const UserScreen = ({
 												clearServerMessages
 											}
 										/>
-										<div style={{flex: 4}}>
-											<MessageBar
-												handleSend={handleSendMessage}
-												room={room}
-											/>
-										</div>
-									</>
+										<MessageBar
+											handleSend={handleSendMessage}
+											room={room}
+											key={room.get('_id')}
+										/>
+									</ServerController.ServerProvider>
 								);
 							}}
 						/>

@@ -74,7 +74,7 @@ const SignUp = ({signUp, error, message, clear}) => {
 	}, [error]);
 	useEffect(() => {
 		setSuccessMsg(Boolean(message));
-		if (Boolean(message)) setTimeout(() => history.push('/login'), 2000);
+		if (message) setTimeout(() => history.push('/login'), 2000);
 	}, [message]);
 	return (
 		<Container component="main" maxWidth="xs">

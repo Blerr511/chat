@@ -37,7 +37,7 @@ const DialogCreateInvite = ({open, handleOnClose, server}) => {
 					margin="normal"
 					name="inviteToken"
 					fullWidth
-					value={window.location.href + 'invite/' + token}
+					value={`${window.location.host}/invite/${token}`}
 				/>
 			</DialogContent>
 			<DialogActions>

@@ -6,6 +6,9 @@ import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
 import store, {persistor} from './helpers/store';
 import {PersistGate} from 'redux-persist/integration/react';
+if (module.hot && process.env.NODE_ENV !== 'production') {
+	module.hot.accept();
+}
 
 ReactDOM.render(
 	<Provider store={store}>

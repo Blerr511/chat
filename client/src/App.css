@@ -1,0 +1,9 @@
+::-webkit-input-placeholder,
+body,
+button,
+input,
+select,
+textarea {
+	font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-rendering: optimizeLegibility;
+}

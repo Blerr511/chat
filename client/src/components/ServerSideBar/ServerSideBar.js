@@ -13,7 +13,6 @@ import DialogCreateInvite from '../Dialog/DialogCreateInvite';
 import useStorageState from '../../hooks/useStorageState.hook';
 import usePermissionControl from '../../hooks/usePermissionControl';
 import {d_ROLE_CREATE_ROOM} from '../../config/roles';
-import ServerContext from './ServerContext';
 
 const useStyles = makeStyles(theme => ({
 	paper: {
@@ -197,8 +196,7 @@ const ServerSideBar = ({
 		handleCloseDialog();
 	};
 	return (
-		<ServerContext.Provider
-			value={{role: myRoleJs, serverId: id}}>
+		<>
 			<DialogCreateRoom
 				error={error}
 				handleOnClose={handleCloseDialog}
@@ -280,7 +278,7 @@ const ServerSideBar = ({
 						})}
 				</div>
 			</nav>
-		</ServerContext.Provider>
+		</>
 	);
 };
 

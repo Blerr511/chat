@@ -1,0 +1,33 @@
+{
+	"root": true,
+	"rules": {
+		"comma-dangle": "off",
+		"curly": "off",
+		"no-shadow": "off",
+		"no-mixed-spaces-and-tabs": "off",
+		"prettier/prettier": "warn",
+		"no-unused-vars": "warn"
+	},
+	"env": {
+		"es6": true,
+		"browser": true,
+		"node": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 2020,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"parser": "babel-eslint",
+	"extends": [
+		"eslint:recommended",
+		"plugin:prettier/recommended",
+		"plugin:flowtype/recommended",
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended",
+		"prettier/flowtype"
+	],
+	"plugins": ["react", "react-hooks", "flowtype", "prettier"]
+}

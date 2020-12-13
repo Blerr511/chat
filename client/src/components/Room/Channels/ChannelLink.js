@@ -8,9 +8,9 @@ import SettingsIcon from '../../../svg/Settings.icon';
 import AddPersonIcon from '../../../svg/AddPerson.icon';
 import {Styled} from '../../StyledComponents/Styled.group';
 import lastTextChannel from '../../../storage/servers/lastTextChannel';
-import ServerContext from '../../ServerSideBar/ServerContext';
 import usePermissionControl from '../../../hooks/usePermissionControl';
 import {d_ROLE_EDIT_ROOM} from '../../../config/roles';
+import {useServerSelector} from '../../ServerSideBar/ServerController';
 
 const useStyles = makeStyles(theme => ({
 	roomTitle: {
@@ -50,8 +50,8 @@ const useStyles = makeStyles(theme => ({
 
 const ChannelLink = ({roomId, textChannelExpanded, name}) => {
 	const classes = useStyles();
-	const {role, serverId} = useContext(ServerContext);
-	const WithPermission = usePermissionControl(role);
+	const serverId = useServerSelector(server => server.get('_id'));
+	const WithPermission = usePermissionControl();
 	return (
 		<NavLink
 			to={controller.channels.link({

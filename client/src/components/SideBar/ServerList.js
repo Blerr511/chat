@@ -1,20 +1,11 @@
-import {
-	Avatar,
-	Divider,
-	IconButton,
-	ListItemAvatar,
-	makeStyles,
-	Tooltip
-} from '@material-ui/core';
-import React, {useState} from 'react';
+import {Divider, ListItemAvatar, makeStyles} from '@material-ui/core';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {List} from 'immutable';
 import {Add, Forum} from '@material-ui/icons';
 import {HoverSquare} from '../StyledComponents/HoverSquare.group';
-import {Styled} from '../StyledComponents/Styled.group';
-import {NavLink, useHistory, useRouteMatch} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 import controller from '../../Routes/controller';
-import lastTextChannel from '../../storage/servers/lastTextChannel';
 import SideBarNavLink from '../Room/Servers/SideBarNavLink';
 
 const styles = makeStyles(theme => ({

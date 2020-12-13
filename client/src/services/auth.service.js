@@ -1,4 +1,3 @@
-import {jsonToQueryParams} from '../helpers/jsonToQueryParams';
 import {handleResponse} from '../helpers/handleResponse';
 import {authHeader} from '../helpers/headers';
 

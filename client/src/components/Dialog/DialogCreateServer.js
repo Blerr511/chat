@@ -34,7 +34,7 @@ const DialogCreateServer = ({
 	useEffect(() => {
 		let tmr = null;
 		setMessage3(Boolean(message));
-		if (Boolean(message))
+		if (message)
 			tmr = setTimeout(() => {
 				setMessage3('');
 				handleOnClose();
@@ -59,7 +59,7 @@ const DialogCreateServer = ({
 						onExited={onMessageClose}
 						style={{width: '100%', marginBottom: '20px'}}>
 						<Alert
-							severity={Boolean(error3) ? 'error' : 'success'}
+							severity={error3 ? 'error' : 'success'}
 							action={
 								<IconButton
 									aria-label="close"

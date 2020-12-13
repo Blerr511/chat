@@ -1,5 +1,4 @@
 import {createMuiTheme} from '@material-ui/core';
-import {grey} from '@material-ui/core/colors';
 
 export const light = createMuiTheme({
 	palette: {
@@ -30,7 +29,16 @@ export const dark = createMuiTheme({
 			messageHover: 'rgba(4,4,5,0.07)',
 			helpWarning: 'rgba(250,166,26,0.1)',
 			helpInfo: 'rgba(0,176,244,0.1)',
-			interactiveActive: '#fff'
+			interactiveActive: '#fff',
+			channelTextarea: '#40444b'
+		},
+		scrollbar: {
+			autoThumb: '#202225',
+			autoTrack: '#2e3338'
+		},
+		header: {
+			primary: '#fff',
+			secondary: '#b9bbbe'
 		},
 		neutral: {
 			main: '#5c6ac4'
@@ -66,7 +74,8 @@ export const dark = createMuiTheme({
 		sideBarWidth: 240,
 		borderRadius: 3,
 		iconSmallest: 12,
-		iconSmaller: 20
+		iconSmaller: 20,
+		iconMid: 24
 	},
 	transitions: {
 		duration: {
@@ -83,7 +92,13 @@ export const dark = createMuiTheme({
 		button: {
 			fontSize: '16px'
 		},
-		fontFamily: 'Whitney,Helvetica Neue,Helvetica,Arial,sans-serif',
+		fontFamily: [
+			'Whitney',
+			'Helvetica Neue',
+			'Helvetica',
+			'Arial',
+			'sans-serif'
+		],
 		allVariants: {
 			textRendering: 'optimizeLegibility',
 			userSelect: 'none'

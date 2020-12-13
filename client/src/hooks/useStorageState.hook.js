@@ -20,7 +20,7 @@ const useStorageState = (key, initialValue) => {
 	}, []);
 	useEffect(() => {
 		localStorage.setItem(key, _state);
-	}, [_state]);
+	}, [_state, key]);
 	useEffect(() => {
 		_setState(
 			SafeJsonParse(localStorage.getItem(String(key))) ?? initialValue
