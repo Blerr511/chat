@@ -11,6 +11,9 @@ router.put('/', s3.upload.single('serverIcon'), controller.server.create);
 
 router.post('/:serverId/join', controller.server.joinServer);
 
+/**
+ * @todo socket not joined to room after create
+ */
 router.post(
     '/:serverId/newRoom',
     permissionMiddleware('createRoom', (req) => req.params.serverId),
