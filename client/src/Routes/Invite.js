@@ -244,7 +244,7 @@ const InvalidInvite = () => {
 	return (
 		<div className={classes.wrapper}>
 			<img
-				src={require('../assets/img/invalid_invite.svg')}
+				src={require('../assets/svg/invalid_invite.svg')}
 				alt="Invite not found"
 				className={classes.img}
 			/>

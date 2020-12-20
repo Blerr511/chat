@@ -1,7 +1,11 @@
 import {makeStyles, TextField} from '@material-ui/core';
 import {AddCircle} from '@material-ui/icons';
-import React, {useCallback} from 'react';
-import {useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
+import PropTypes from 'prop-types';
+import {ReactComponent as SVG_GIFT} from '../../assets/svg/gift.svg';
+import {ReactComponent as SVG_GIF} from '../../assets/svg/gif.svg';
+import {SMILE_SHAPE} from '../../assets/img';
+import ShapedButton from '../ShapedButton';
 
 const SendBlock = ({onSend, roomName}) => {
 	const classes = useStyles();
@@ -47,13 +51,40 @@ const SendBlock = ({onSend, roomName}) => {
 								inputRef={$input}
 							/>
 						</div>
-						<div className={classes.icons}></div>
+						<div className={classes.icons}>
+							<div>
+								<SVG_GIFT />
+							</div>
+							<div>
+								<SVG_GIF />
+							</div>
+							<div>
+								<ShapedButton
+									shape={{
+										src: SMILE_SHAPE,
+										count: 50,
+										height: 220,
+										width: 484,
+										columns: 11
+									}}
+									width={22}
+									height={22}
+								/>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</form>
 	);
 };
+
+SendBlock.propTypes = {
+	onSend: PropTypes.func.isRequired,
+	roomName: PropTypes.string
+};
+
+export default SendBlock;
 
 const useStyles = makeStyles(theme => ({
 	formContainer: {
@@ -78,6 +109,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	innerContainer: {
 		paddingLeft: theme.spacing(2),
+		paddingRight: theme.spacing(2),
 		display: 'flex',
 		alignItems: 'flex-start'
 	},
@@ -114,7 +146,25 @@ const useStyles = makeStyles(theme => ({
 	textareaInput: {
 		color: '#dcddde'
 	},
-	icons: {}
+	icons: {
+		marginRight: -6,
+		position: 'sticky',
+		display: 'flex',
+		top: 0,
+		height: 44,
+		'&>div': {
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: theme.spacing(0.5),
+			margin: theme.spacing(0, 0.5),
+			cursor: 'pointer',
+			color: theme.palette.text.interactiveNormal,
+			'&:hover': {
+				color: theme.palette.text.interactiveHover,
+			}
+		}
+	}
 }));
 
 const useInputClasses = makeStyles(() => ({
@@ -132,5 +182,3 @@ const useInputClasses = makeStyles(() => ({
 		}
 	}
 }));
-
-export default SendBlock;

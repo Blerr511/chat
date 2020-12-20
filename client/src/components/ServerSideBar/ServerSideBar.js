@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 		textAlign: 'center',
 		position: 'relative',
 		boxShadow: `inset 0 -1px 0 ${theme.palette.background.modifierAccent}`,
-		background: `url(${require('../../assets/img/invite_new_m.svg')}) no-repeat center 20px`,
+		background: `url(${require('../../assets/svg/invite_new_m.svg')}) no-repeat center 20px`,
 		padding: '73px 20px 20px'
 	},
 	inviteText: {

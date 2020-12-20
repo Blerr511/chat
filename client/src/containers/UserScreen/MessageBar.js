@@ -1,7 +1,8 @@
 import React from 'react';
 import {makeStyles, Paper} from '@material-ui/core';
-
+import PropTypes from 'prop-types';
 import MessageSection from '../../components/MessageSection';
+import {Map} from 'immutable';
 
 const useStyles = makeStyles(theme => ({
 	paper: {
@@ -39,5 +40,8 @@ const MessageBar = ({room, handleSend}) => {
 		</Paper>
 	);
 };
-
+MessageBar.propTypes = {
+	room: PropTypes.instanceOf(Map).isRequired,
+	handleSend: PropTypes.func.isRequired
+};
 export default MessageBar;

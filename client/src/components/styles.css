@@ -1,0 +1,9 @@
+.emojiButton {
+	filter: grayscale(100%);
+	transition: transform 0.2s, filter 0.2s;
+}
+
+.emojiButton:hover {
+	filter: grayscale(0);
+	transform: scale(1.2);
+}
