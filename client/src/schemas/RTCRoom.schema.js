@@ -1,7 +1,7 @@
-const {default: messageSchema} = require('./message.schema');
+const {default: userSchema} = require('./user.schema');
 
 const required = true;
-const roomSchema = {
+const RTCRoomSchema = {
 	title: 'roomSchema',
 	type: 'object',
 	properties: {
@@ -16,10 +16,12 @@ const roomSchema = {
 		createdAt: {
 			type: 'string'
 		},
-		messages: {
+		members: {
 			type: 'array',
-			items: messageSchema
+			items: {
+				type: userSchema
+			}
 		}
 	}
 };
-export default roomSchema;
+export default RTCRoomSchema;

@@ -3,6 +3,7 @@ import {validate} from 'json-schema';
 import roomSchema from '../schemas/room.schema';
 import messageSchema from '../schemas/message.schema';
 import {auth} from '../helpers/socket.io';
+import RTCRoomSchema from '../schemas/RTCRoom.schema';
 
 export const SOCKET_AUTH_REQUEST = 'SOCKET_AUTH_REQUEST';
 export const SOCKET_AUTH_SUCCESS = 'SOCKET_AUTH_SUCCESS';
@@ -40,9 +41,24 @@ const NEW_ROOM_CREATED = {
 	}
 };
 
+const NEW_RTC_ROOM_CREATED = {
+	type: 'NEW_RTC_ROOM_CREATED',
+	schema: {
+		type: 'object',
+		properties: {
+			serverId: {
+				type: 'string',
+				required: true
+			},
+			data: RTCRoomSchema
+		}
+	}
+};
+
 export const socketActions = {
 	SERVER_MESSAGE_RECEIVED,
-	NEW_ROOM_CREATED
+	NEW_ROOM_CREATED,
+	NEW_RTC_ROOM_CREATED
 };
 /**
  * Checking if action is valid and defined into socketActions

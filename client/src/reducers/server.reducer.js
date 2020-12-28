@@ -95,6 +95,17 @@ const server = (state = initialState, {type, payload}) => {
 				],
 				v => v.push(fromJS(payload.data))
 			);
+		case socketActions.NEW_RTC_ROOM_CREATED.type:
+			return state.updateIn(
+				[
+					'list',
+					state
+						.get('list')
+						.findIndex(v => v.get('_id') === payload.serverId),
+					'rtcRooms'
+				],
+				v => v.push(fromJS(payload.data))
+			);
 		default:
 			return state;
 	}
