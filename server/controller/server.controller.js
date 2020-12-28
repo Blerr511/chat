@@ -184,14 +184,14 @@ const addRTCRoom = async (req, res, next) => {
     try {
         const { name } = req.body;
         const { serverId } = req.params;
+        const server = await Server.findById(serverId);
+        if (!server) throw new NotFoundError('Server not found');
+        if (!name) throw new RequiredError('Room name is required');
         const RTCRoomObject = new RTCRoom({ name, server: serverId });
         await RTCRoomObject.save();
-        await Server.updateOne(
-            { _id: serverId },
-            {
-                $push: { rtcRooms: RTCRoomObject },
-            }
-        );
+        server.rooms.push(RTCRoomObject);
+        await server.save()
+
         IO.to(server._id).emit(
             'action',
             actions.room.newRtcRoomCreated({ serverId, data: RTCRoomObject })
