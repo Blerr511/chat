@@ -2,6 +2,7 @@ const SocketApp = require('../../helpers/socket/SocketApp');
 const controller = require('../../helpers/socket/events/controller');
 const adapter = require('./helper/socketAdapter');
 const actionController = require('../../helpers/socket/events/actionController');
+const { Server } = require('../../db/schemas/server.schema');
 
 const staticController = {
     auth: (next, socket) => {
@@ -22,7 +23,14 @@ socketService.use(
     actionController.dataType('type'),
     controller.action
 );
-socketService.use('disconnect', staticController.disconnect);
+socketService.use(
+    'disconnect',
+    (next, socket) => {
+        Server.disconnectEverything(socket.user._id);
+        next();
+    },
+    staticController.disconnect
+);
 
 socketService.catch(controller.catch);
 

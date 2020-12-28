@@ -5,6 +5,7 @@ const {
 } = require('../../messages/error/mongoose.error');
 const { MemberSchema } = require('./member.schema');
 const { MessageModel } = require('./message.schema');
+const { RTCRoom } = require('./RTCRoom.schema');
 
 const ServerSchema = new Schema({
     name: { type: String, required: [true, 'Server name is required'] },
@@ -66,9 +67,9 @@ ServerSchema.statics.leaveRoom = async function (_server, roomId, userId) {
 };
 
 ServerSchema.statics.disconnectEverything = async function (userId) {
-    const result = await this.updateMany(
-        { 'rooms.members': userId },
-        { $pull: { 'rooms.$.members': userId } }
+    const result = await RTCRoom.update(
+        { members: userId },
+        { $pull: { 'members': userId } }
     );
     if (!result.ok) throw new Error('Some error happens');
     return result;
