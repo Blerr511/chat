@@ -77,7 +77,7 @@ const create = async (req, res, next) => {
         adapter.getByUserId(user._id)?.join(server._id);
 
         const data = await Server.populate(server, {
-            path: 'members.user members.role rooms',
+            path: 'members.user members.role rooms rtcRooms',
         });
         req.response = {
             code: 200,

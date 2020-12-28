@@ -39,7 +39,7 @@ ServerSchema.methods.message = function (roomId, data) {
 ServerSchema.statics.getMyServers = async function (user) {
     if (!user) throw new Error(userErrors.user_not_found);
     const server = await this.find({ 'members.user': user })
-        .populate('members.user members.role rooms')
+        .populate('members.user members.role rooms rtcRooms')
         .lean();
     if (!server) throw new Error(roomErrors.server_not_exists);
     return server;
