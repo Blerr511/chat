@@ -23,13 +23,14 @@ const DialogCreateRoom = ({
 	error,
 	message,
 	loading,
-	onMessageClose
+	onMessageClose,
+	defaultActive
 }) => {
 	const classes = styles();
 	const credentials = useRef({name: ''});
 	const [error3, setError3] = useState('');
 	const [message3, setMessage3] = useState('');
-	const [channelType, setChannelType] = useState('text');
+	const [channelType, setChannelType] = useState(defaultActive);
 	useEffect(() => {
 		setError3(Boolean(error));
 	}, [error]);
@@ -43,6 +44,10 @@ const DialogCreateRoom = ({
 			}, 1500);
 		return () => clearTimeout(tmr);
 	}, [message]);
+
+	useEffect(() => {
+		setChannelType(defaultActive);
+	}, [setChannelType, defaultActive]);
 	return (
 		<Dialog open={open} onClose={handleOnClose}>
 			<form
@@ -104,12 +109,11 @@ const DialogCreateRoom = ({
 							style={{
 								justifyContent: 'flex-start',
 								paddingLeft: 0
-							}}
-							disabled>
+							}}>
+							<br />
 							<Checkbox
 								checked={channelType === 'audio'}
 								style={{color: 'white!important'}}
-								disabled
 							/>
 							Audio Channel
 						</Button>

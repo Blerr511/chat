@@ -19,7 +19,8 @@ import {
 	getServers,
 	createServer,
 	clearServerMessages,
-	createNewServerRoom
+	createNewServerRoom,
+	createNewRtcRoom
 } from '../actions/server.action';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import controller from './controller';
@@ -63,6 +64,7 @@ const UserScreen = ({
 	sendSocketAction,
 	clearServerMessages,
 	createNewServerRoom,
+	createNewRtcRoom,
 	searchUsersFakeLoading
 }) => {
 	const classes = styles();
@@ -189,6 +191,7 @@ const UserScreen = ({
 											message={servers.get('message')}
 											loading={servers.get('loading')}
 											createNewRoom={createNewServerRoom}
+											createNewRtcRoom={createNewRtcRoom}
 											clearServerMessages={
 												clearServerMessages
 											}
@@ -224,6 +227,7 @@ const mapDispatchToProps = {
 	clearServerMessages,
 	getRoles: _getRoles,
 	createNewServerRoom,
+	createNewRtcRoom,
 	searchUsersFakeLoading,
 	getMyRooms: _getMyRooms
 };

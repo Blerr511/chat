@@ -54,8 +54,32 @@ const createNewRoom = async (serverId, room) => {
 		.then(data => data);
 };
 
+const createNewRtcRoom = async (serverId, rtcRoom) => {
+	const body = new URLSearchParams();
+	for (const k in rtcRoom) {
+		const v = rtcRoom[k];
+		if (v) body.append(k, v);
+	}
+	const requestInit = {
+		method: 'POST',
+		headers: {
+			...authHeader(),
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body
+	};
+
+	return await fetch(
+		process.env.REACT_APP_API_CREATE_SERVER + `/${serverId}/newRtcRoom`,
+		requestInit
+	)
+		.then(handleResponse)
+		.then(data => data);
+};
+
 export const serverServices = {
 	get,
 	create,
-	createNewRoom
+	createNewRoom,
+	createNewRtcRoom
 };

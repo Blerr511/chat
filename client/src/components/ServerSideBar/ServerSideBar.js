@@ -5,6 +5,7 @@ import {makeStyles} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import ChevronRight from '@material-ui/icons/ChevronRight';
+import PropTypes from 'prop-types';
 
 import XIcon from '../../svg/X.icon';
 import ChannelLink from '../Room/Channels/ChannelLink';
@@ -13,6 +14,8 @@ import DialogCreateInvite from '../Dialog/DialogCreateInvite';
 import useStorageState from '../../hooks/useStorageState.hook';
 import usePermissionControl from '../../hooks/usePermissionControl';
 import {d_ROLE_CREATE_ROOM} from '../../config/roles';
+import {Map} from 'immutable';
+import RTCChannelButton from '../Room/Channels/RTCChannelButton';
 
 const useStyles = makeStyles(theme => ({
 	paper: {
@@ -61,7 +64,6 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		flexDirection: 'column',
 		boxSizing: 'border-box',
-		flex: '1 1 auto',
 		boxShadow: 'none',
 		paddingRight: theme.spacing(1)
 	},
@@ -151,6 +153,7 @@ const useStyles = makeStyles(theme => ({
 		}
 	}
 }));
+
 const ServerSideBar = ({
 	server,
 	myUser,
@@ -158,15 +161,24 @@ const ServerSideBar = ({
 	message,
 	loading,
 	clearServerMessages,
-	createNewRoom
+	createNewRoom,
+	createNewRtcRoom
 }) => {
 	const name = server.get('name'),
 		rooms = server.get('rooms'),
+		rtcRooms = server.get('rtcRooms'),
 		members = server.get('members'),
 		id = server.get('_id');
+	const [createRoomDefaultActive, setCreateRoomDefaultActive] = useState(
+		'text'
+	);
 	const classes = useStyles();
 	const [textChannelExpanded, setTextChannelExpanded] = useStorageState(
 		`app.server_${id}.textChannelCollapsed`,
+		true
+	);
+	const [voiceChannelExpanded, setVoiceChannelExpanded] = useStorageState(
+		`app.server_${id}.voiceChannelCollapsed`,
 		true
 	);
 	const [createRoomDialog, setCreateRoomDialog] = useState(false);
@@ -178,9 +190,19 @@ const ServerSideBar = ({
 	const handleTextExpandClick = () => {
 		setTextChannelExpanded(v => !v);
 	};
-
+	const handleVoiceExpandClick = () => {
+		setVoiceChannelExpanded(v => !v);
+	};
 	const handleCloseDialog = () => setCreateRoomDialog(false);
 	const handleOpenDialog = () => setCreateRoomDialog(true);
+	const handleOpenDialogText = () => {
+		setCreateRoomDefaultActive('text');
+		handleOpenDialog();
+	};
+	const handleOpenDialogVoice = () => {
+		setCreateRoomDefaultActive('audio');
+		handleOpenDialog();
+	};
 	const handleCloseInviteDialog = () => setCreateInviteDialog(false);
 	const handleOpenInviteDialog = () => setCreateInviteDialog(true);
 	const handleCloseInviteBlock = () => {
@@ -193,6 +215,7 @@ const ServerSideBar = ({
 	const WithPermission = usePermissionControl(myRoleJs);
 	const handleSubmitNewRoom = ({name, type}) => {
 		if (type === 'text') createNewRoom(id, {name});
+		else if (type === 'audio') createNewRtcRoom(id, {name});
 		handleCloseDialog();
 	};
 	return (
@@ -205,6 +228,7 @@ const ServerSideBar = ({
 				message={message}
 				open={createRoomDialog}
 				onMessageClose={clearServerMessages}
+				defaultActive={createRoomDefaultActive}
 			/>
 			<DialogCreateInvite
 				handleOnClose={handleCloseInviteDialog}
@@ -256,7 +280,7 @@ const ServerSideBar = ({
 							</Typography>
 							<WithPermission permission={d_ROLE_CREATE_ROOM}>
 								<Typography
-									onClick={handleOpenDialog}
+									onClick={handleOpenDialogText}
 									className={classes.newRoomIcon}>
 									<Add />
 								</Typography>
@@ -277,9 +301,56 @@ const ServerSideBar = ({
 							);
 						})}
 				</div>
+				<div className={classes.roomContainer}>
+					<div className={classes.headerContainer}>
+						<div className={classes.roomHeaderContainer}>
+							<Typography
+								onClick={handleVoiceExpandClick}
+								className={classes.roomHeaderTitle}>
+								<ChevronRight
+									className={classes.expandIcon}
+									data-expanded={voiceChannelExpanded}
+								/>
+								Voice channels
+							</Typography>
+							<WithPermission permission={d_ROLE_CREATE_ROOM}>
+								<Typography
+									onClick={handleOpenDialogVoice}
+									className={classes.newRoomIcon}>
+									<Add />
+								</Typography>
+							</WithPermission>
+						</div>
+					</div>
+
+					{rtcRooms &&
+						rtcRooms.map(el => {
+							return (
+								<RTCChannelButton
+									key={el.get('_id')}
+									name={el.get('name')}
+									roomId={el.get('_id')}
+									isActive={el.get('members')}
+									expanded={voiceChannelExpanded}
+									serverId={id}
+								/>
+							);
+						})}
+				</div>
 			</nav>
 		</>
 	);
+};
+
+ServerSideBar.propTypes = {
+	server: PropTypes.instanceOf(Map),
+	myUser: PropTypes.instanceOf(Map),
+	error: PropTypes.string,
+	message: PropTypes.string,
+	loading: PropTypes.bool,
+	clearServerMessages: PropTypes.func,
+	createNewRoom: PropTypes.func,
+	createNewRtcRoom: PropTypes.func
 };
 
 export default ServerSideBar;

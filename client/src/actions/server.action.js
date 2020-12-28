@@ -72,3 +72,24 @@ export const serverSetActiveChannel = payload => ({
 	type: SERVER_SET_ACTIVE_CHANNEL,
 	payload
 });
+
+export const CREATE_SERVER_RTC_ROOM_REQUEST = 'CREATE_SERVER_RTC_ROOM_REQUEST';
+export const CREATE_SERVER_RTC_ROOM_SUCCESS = 'CREATE_SERVER_RTC_ROOM_SUCCESS';
+export const CREATE_SERVER_RTC_ROOM_FAILURE = 'CREATE_SERVER_RTC_ROOM_FAILURE';
+
+export const createNewRtcRoom = (serverId, rtcRoom) => dispatch => {
+	const request = () => {
+		return {type: CREATE_SERVER_RTC_ROOM_REQUEST};
+	};
+	const success = payload => {
+		return {type: CREATE_SERVER_RTC_ROOM_SUCCESS, payload};
+	};
+	const failure = error => {
+		return {type: CREATE_SERVER_RTC_ROOM_FAILURE, payload: error};
+	};
+	dispatch(request());
+	serverServices.createNewRtcRoom(serverId, rtcRoom).then(
+		data => dispatch(success(data)),
+		error => dispatch(failure(error))
+	);
+};

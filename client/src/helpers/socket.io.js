@@ -6,7 +6,7 @@ export const d_SOCKET_MESSAGE = 'message';
 export const d_SOCKET_AUTH = 'auth';
 
 const socket = io(process.env.REACT_APP_SOCKET, {autoConnect: false});
-console.log(process.env.REACT_APP_SOCKET);
+
 export const auth = jwtToken =>
 	new Promise((res, rej) => {
 		socket.connect();
