@@ -1,6 +1,5 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
 const { Server } = require('./server.schema');
-const { MemberSchema } = require('./member.schema');
 
 const RTCRoomSchema = new Schema(
     {
@@ -9,10 +8,7 @@ const RTCRoomSchema = new Schema(
             default: 'Voice Room',
         },
         server: { type: SchemaTypes.ObjectId, ref: 'server' },
-        members: {
-            type: [MemberSchema],
-            default: [],
-        },
+        members: [{ type: SchemaTypes.ObjectId, ref: 'users' }],
     },
     {
         timestamps: false,

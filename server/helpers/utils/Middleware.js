@@ -53,7 +53,8 @@ class Middleware {
             let argv = null;
             const next = (err) => {
                 if (err) {
-                    this._catch?.call(null, err, ...context, ...argv);
+                    if (this._catch)
+                        this._catch.call(null, err, ...context, ...argv);
                     return;
                 }
                 const ir = gen.next();
