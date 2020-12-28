@@ -18,7 +18,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/register', router.register, responseMiddleware);
 // ------------------------------- //
 app.use('/api/*', authMiddleware);
-app.use('/api/room', router.room);
 app.use('/api/login', router.login);
 app.use('/api/users', router.users);
 app.use('/api/token', router.invite);

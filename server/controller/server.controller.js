@@ -2,6 +2,7 @@ const { Room } = require('../db/schemas/room.schema');
 const { Token } = require('../db/schemas/token.schema');
 const { Server } = require('../db/schemas/server.schema');
 const { Member } = require('../db/schemas/member.schema');
+const { RTCRoom } = require('../db/schemas/RTCRoom.schema');
 
 const adapter = require('../services/socket.io/helper/socketAdapter');
 const { IO } = require('../services/socket.io');
@@ -63,7 +64,13 @@ const create = async (req, res, next) => {
             name: 'Main room',
             server: server._id,
         });
+        const rtcRoom = new RTCRoom({
+            name: 'Voice channel',
+            server: server._id,
+        });
         server.rooms.push(room);
+        server.rtcRooms.push(rtcRoom);
+        await rtcRoom.save();
         await room.save();
         await server.save();
 
@@ -168,6 +175,38 @@ const addRoom = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Handle create new room for in server
+ * @type {import("express").RequestHandler}
+ */
+const addRTCRoom = async (req, res, next) => {
+    try {
+        const { name } = req.body;
+        const { serverId } = req.params;
+        const RTCRoomObject = new RTCRoom({ name, server: serverId });
+        await RTCRoomObject.save();
+        await Server.updateOne(
+            { _id: serverId },
+            {
+                $push: { rtcRooms: RTCRoomObject },
+            }
+        );
+        IO.to(server._id).emit(
+            'action',
+            actions.room.newRtcRoomCreated({ serverId, data: RTCRoomObject })
+        );
+        req.response = {
+            code: 200,
+            status: 'success',
+            message: 'Room success crated',
+        };
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
 /**
  * @type {import('express').RequestHandler}
  */
@@ -221,4 +260,5 @@ module.exports = {
     addRoom,
     joinRoom,
     leaveRoom,
+    addRTCRoom,
 };

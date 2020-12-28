@@ -4,8 +4,8 @@ const {
     d_SOCKET_AUTHENTICATED,
 } = require('../../../constants/socketEvents.constant');
 const User = require('../../../db/schemas/user.schema');
-const { Room } = require('../../../db/schemas/room.schema');
 const { verify } = require('jsonwebtoken');
+const { Server } = require('../../../db/schemas/server.schema');
 
 if (process.env.NODE_ENV === 'development') require('colors');
 
@@ -31,7 +31,7 @@ const authEvent = (next, socket, io, data) => {
             doc.socketId = socket.id;
             doc.save();
         });
-        Room.getRoomsOfUser(socket.user)
+        Server.getRoomsOfUser(socket.user)
             .then((data) => {
                 data.forEach((el) => {
                     socket.join(el._id);

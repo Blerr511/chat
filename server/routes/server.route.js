@@ -20,6 +20,15 @@ router.post(
     controller.server.addRoom
 );
 
+/**
+ * @todo socket not joined to room after create
+ */
+router.post(
+    '/:serverId/newRtcRoom',
+    permissionMiddleware('createRoom', (req) => req.params.serverId),
+    controller.server.addRTCRoom
+);
+
 router.post('/:serverId/:roomId/join', controller.server.joinRoom);
 
 router.post('/:serverId/:roomId/leave', controller.server.leaveRoom);

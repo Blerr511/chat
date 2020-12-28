@@ -11,8 +11,8 @@ const ServerSchema = new Schema({
     members: {
         type: [MemberSchema],
     },
-
     rooms: [{ type: SchemaTypes.ObjectId, ref: 'room' }],
+    rtcRooms: [{ type: SchemaTypes.ObjectId, ref: 'rtc-room' }],
     icon: { type: String, default: null },
 });
 
@@ -72,6 +72,16 @@ ServerSchema.statics.disconnectEverything = async function (userId) {
     );
     if (!result.ok) throw new Error('Some error happens');
     return result;
+};
+
+ServerSchema.statics.getRoomsOfUser = async function (user) {
+    const rooms = await Server.find({ 'members.user': user._id })
+        .select('rooms')
+        .lean();
+    return rooms.reduce((acc, v) => {
+        acc.push(...v.rooms);
+        return acc;
+    }, []);
 };
 
 const Server = model('server', ServerSchema);
