@@ -155,14 +155,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ServerSideBar = ({
+	error,
 	server,
 	myUser,
-	error,
 	message,
 	loading,
-	clearServerMessages,
 	createNewRoom,
-	createNewRtcRoom
+	joinToRtcChannel,
+	createNewRtcRoom,
+	clearServerMessages
 }) => {
 	const name = server.get('name'),
 		rooms = server.get('rooms'),
@@ -330,9 +331,14 @@ const ServerSideBar = ({
 									key={el.get('_id')}
 									name={el.get('name')}
 									roomId={el.get('_id')}
-									isActive={el.get('members')}
+									isActive={el
+										.get('members')
+										.includes(myUser.get('_id'))}
 									expanded={voiceChannelExpanded}
 									serverId={id}
+									onClick={joinToRtcChannel.bind(null, {
+										roomId: el.get('_id')
+									})}
 								/>
 							);
 						})}
@@ -350,7 +356,8 @@ ServerSideBar.propTypes = {
 	loading: PropTypes.bool,
 	clearServerMessages: PropTypes.func,
 	createNewRoom: PropTypes.func,
-	createNewRtcRoom: PropTypes.func
+	createNewRtcRoom: PropTypes.func,
+	joinToRtcChannel: PropTypes.func
 };
 
 export default ServerSideBar;

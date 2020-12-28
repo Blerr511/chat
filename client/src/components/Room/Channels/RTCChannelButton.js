@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const RTCChannelButton = ({roomId, isActive, expanded, name}) => {
+const RTCChannelButton = ({roomId, isActive, expanded, name, onClick}) => {
 	const classes = useStyles();
 	const serverId = useServerSelector(server => server.get('_id'));
 	const WithPermission = usePermissionControl();
@@ -58,7 +58,8 @@ const RTCChannelButton = ({roomId, isActive, expanded, name}) => {
 		<Button
 			variant="text"
 			className={classes.roomTitle}
-			data-active={isActive}>
+			data-active={isActive}
+			onClick={onClick}>
 			<span
 				style={{
 					display: 'flex',

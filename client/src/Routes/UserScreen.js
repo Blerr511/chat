@@ -25,6 +25,7 @@ import {
 import {Redirect, Route, Switch} from 'react-router-dom';
 import controller from './controller';
 import ServerController from '../components/ServerSideBar/ServerController';
+import {joinToRtcChannel} from '../actions/sendSocket.action';
 
 const styles = makeStyles(theme => ({
 	container: {
@@ -61,10 +62,11 @@ const UserScreen = ({
 	getServers,
 	searchUsers,
 	createServer,
+	joinToRtcChannel,
 	sendSocketAction,
+	createNewRtcRoom,
 	clearServerMessages,
 	createNewServerRoom,
-	createNewRtcRoom,
 	searchUsersFakeLoading
 }) => {
 	const classes = styles();
@@ -195,6 +197,7 @@ const UserScreen = ({
 											clearServerMessages={
 												clearServerMessages
 											}
+											joinToRtcChannel={joinToRtcChannel}
 										/>
 										<MessageBar
 											handleSend={handleSendMessage}
@@ -229,7 +232,8 @@ const mapDispatchToProps = {
 	createNewServerRoom,
 	createNewRtcRoom,
 	searchUsersFakeLoading,
-	getMyRooms: _getMyRooms
+	getMyRooms: _getMyRooms,
+	joinToRtcChannel
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserScreen);
