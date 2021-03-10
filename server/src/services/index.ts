@@ -2,9 +2,10 @@ import 'colors';
 import S3Service from './aws/S3';
 import app from './express';
 import socketService from './socket.io';
-require('colors');
+import { createServer } from 'http';
 
-const server = require('http').createServer(app);
+const server = createServer(app);
+
 const initServices = () => {
     S3Service.start();
     socketService.start(server);
